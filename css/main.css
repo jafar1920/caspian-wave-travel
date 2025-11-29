@@ -1,0 +1,17 @@
+/* Main CSS Import File */
+@import url('base/reset.css');
+@import url('base/typography.css');
+
+@import url('layouts/header.css');
+@import url('layouts/sections.css');
+@import url('layouts/grid.css');
+
+@import url('components/navbar.css');
+@import url('components/whatsapp-button.css');
+@import url('components/cards.css');
+@import url('components/carousel.css');
+@import url('components/contact.css');
+@import url('components/footer.css');
+
+@import url('animations.css');
+@import url('responsive.css');

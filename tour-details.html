@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tour Details - CaspianWaveTravel</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* Add all your tour details specific styles here */
+        .tour-details-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .tour-gallery {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .gallery-slide {
+            display: none;
+            position: relative;
+            height: 500px;
+        }
+
+        .gallery-slide.active {
+            display: block;
+        }
+
+        .gallery-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .gallery-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .gallery-dot.active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        .tour-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .tour-info h1 {
+            color: #00264d;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .tour-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .included-section, .excluded-section {
+            background: #f8fdff;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 4px solid #0095da;
+        }
+
+        .excluded-section {
+            border-left-color: #ff6b6b;
+        }
+
+        .included-section h3, .excluded-section h3 {
+            color: #00264d;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .included-section h3 i {
+            color: #25D366;
+        }
+
+        .excluded-section h3 i {
+            color: #ff6b6b;
+        }
+
+        .included-section ul, .excluded-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .included-section li, .excluded-section li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .included-section li i {
+            color: #25D366;
+        }
+
+        .excluded-section li i {
+            color: #ff6b6b;
+        }
+
+        .pricing-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 2px solid #0095da;
+            position: sticky;
+            top: 100px;
+        }
+
+        .pricing-card h3 {
+            color: #00264d;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .price-option {
+            background: #f8fdff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #e0f0ff;
+        }
+
+        .price-option h4 {
+            color: #00264d;
+            margin-bottom: 10px;
+        }
+
+        .price-amount {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #0095da;
+            margin-bottom: 10px;
+        }
+
+        .book-now-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #0095da, #00bfff);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .book-now-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 149, 218, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .tour-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .gallery-slide {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div id="nav-container"></div>
+
+    <div class="tour-details-container">
+        <!-- Tour Gallery -->
+        <div class="tour-gallery">
+            <!-- Gallery will be dynamically loaded here -->
+        </div>
+
+        <!-- Tour Content -->
+        <div id="tour-content">
+            <!-- Content will be dynamically loaded here -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/994775700711" class="floating-whatsapp" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+        <div class="animations"></div>
+        <span class="pulse-ring"></span>
+        <span class="pulse-ring pulse-ring-2"></span>
+        <span class="notification-badge"></span>
+        <span class="tooltip-arrow"></span>
+    </a>
+
+    <!-- JavaScript -->
+    <script src="js/components-loader.js"></script>
+    <script src="js/tour-details.js"></script>
+</body>
+</html>

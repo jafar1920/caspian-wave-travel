@@ -1,0 +1,78 @@
+/* Header */
+header {
+    height: 80vh;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    text-align: right;
+    padding: 20px;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    position: relative;
+    color: white;
+    overflow: hidden;
+}
+
+header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('https://firebasestorage.googleapis.com/v0/b/caspianwavetravel-b9aa4.firebasestorage.app/o/center.jpg?alt=media&token=a7e54401-d351-4b6c-8178-02cf88ecc34e') no-repeat center center/cover;
+    filter: blur(5px) brightness(0.8);
+    transform: scale(1.02);
+    opacity: 0;
+    transition: all 0.4s ease;
+    z-index: 1;
+}
+
+header.image-loaded::before {
+    opacity: 1;
+    filter: blur(0) brightness(1);
+    transform: scale(1);
+}
+
+.header-content {
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    gap: 20px;
+}
+
+.header-text h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+}
+
+.header-text p {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    text-shadow: 1px 1px 6px rgba(0,0,0,0.5);
+}
+
+.header-text .contact-btn {
+    display: block;
+    width: fit-content;
+    margin: 20px auto 0 auto;
+    padding: 12px 30px;
+    background: rgb(0, 191, 255);
+    color: white;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(0,0
+    ,0,0.3);
+    transition: all 0.3s ease;
+    animation: float 3s ease-in-out infinite;
+    text-align: center;
+}
+
+.header-text .contact-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+    background: rgb(38, 55, 63);
+}

@@ -1,0 +1,205 @@
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .floating-whatsapp {
+    width: 65px;
+    height: 65px;
+    bottom: 25px;
+    right: 25px;
+    font-size: 2rem;
+  }
+  
+  .floating-whatsapp::after {
+    content: 'WhatsApp us!';
+    right: 80px;
+    font-size: 0.85rem;
+    padding: 10px 14px;
+  }
+  
+  .tooltip-arrow {
+    right: 70px;
+  }
+
+  nav {
+    flex-direction: column;
+    height: auto;
+    padding: 15px;
+    gap: 15px;
+  }
+  
+  .logo-container, .nav-links, .social-icons {
+    flex: none;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .nav-links {
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  
+  .social-icons {
+    gap: 15px;
+  }
+  
+  .header-content {
+    max-width: 100%;
+    gap: 30px;
+    align-items: center;
+  }
+  
+  .header-text h1 {
+    font-size: 2.2rem;
+  }
+  
+  .header-text p {
+    font-size: 1.1rem;
+  }
+  
+  .services {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .card {
+    height: 280px;
+  }
+  
+  .card-overlay h3 {
+    font-size: 1.2rem;
+  }
+  
+  .card-overlay .price {
+    font-size: 1.4rem;
+  }
+  
+  .carousel-track {
+    height: 400px;
+  }
+  
+  .photo-caption {
+    padding: 20px;
+  }
+  
+  .photo-caption h4 {
+    font-size: 1.1rem;
+  }
+  
+  .photo-caption p {
+    font-size: 0.9rem;
+  }
+  
+  .carousel-controls {
+    gap: 20px;
+  }
+  
+  .carousel-btn {
+    width: 45px;
+    height: 45px;
+    font-size: 1rem;
+  }
+  
+  .stats-container {
+    gap: 20px;
+  }
+  
+  .stat h3 {
+    font-size: 2rem;
+  }
+  
+  .contact-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  
+  .contact-card {
+    padding: 30px 20px;
+  }
+  
+  .footer-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-links {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  
+  .header-text h1 {
+    font-size: 1.8rem;
+  }
+  
+  .header-text p {
+    font-size: 1rem;
+  }
+  
+  .services {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .card {
+    height: 250px;
+  }
+  
+  .card-overlay {
+    padding: 20px;
+  }
+  
+  .card-overlay h3 {
+    font-size: 1.1rem;
+  }
+  
+  .card-overlay .price {
+    font-size: 1.3rem;
+  }
+  
+  .card-overlay .duration {
+    font-size: 0.85rem;
+  }
+  
+  .carousel-track {
+    height: 300px;
+  }
+  
+  #customer-photos h2 {
+    font-size: 2rem;
+  }
+  
+  .section-subtitle {
+    font-size: 1rem;
+  }
+  
+  .photo-caption {
+    padding: 15px;
+  }
+  
+  .photo-caption h4 {
+    font-size: 1rem;
+  }
+  
+  .photo-caption p {
+    font-size: 0.85rem;
+  }
+  
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    text-align: center;
+  }
+  
+  .footer-social {
+    justify-content: center;
+  }
+  
+  .contact-info p {
+    justify-content: center;
+  }
+}
