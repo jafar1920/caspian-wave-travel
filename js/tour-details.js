@@ -1,15 +1,15 @@
-// tour-details.js - Dynamic tour details functionality
+// tour-details.js - FIXED VERSION (no circular dependency)
+console.log('=== TOUR-DETAILS.JS LOADED ===');
 
 class TourDetailsManager {
     constructor() {
+        console.log('TourDetailsManager initialized');
         this.tourData = {
-            // TOURS DATA
             'baku-city': {
                 title: 'Baku City Tour',
                 images: [
                     'https://firebasestorage.googleapis.com/v0/b/caspianwavetravel-b9aa4.firebasestorage.app/o/baku.jpg?alt=media&token=96ab7d71-d712-43fa-a8ab-52313c39caee',
-                    'https://firebasestorage.googleapis.com/v0/b/caspianwavetravel-b9aa4.firebasestorage.app/o/Carousel-1.jpeg?alt=media&token=3b2ed8c8-a533-46da-bced-22431b5b63d0',
-                    'https://firebasestorage.googleapis.com/v0/b/caspianwavetravel-b9aa4.firebasestorage.app/o/Carousel-5.jpeg?alt=media&token=49965e0d-01e0-46a1-a59a-43541b31e2f6'
+                    'https://firebasestorage.googleapis.com/v0/b/caspianwavetravel-b9aa4.firebasestorage.app/o/Carousel-1.jpeg?alt=media&token=3b2ed8c8-a533-46da-bced-22431b5b63d0'
                 ],
                 description: 'Discover the perfect blend of ancient history and modern architecture in Azerbaijan\'s vibrant capital. This full-day tour takes you through Baku\'s most iconic landmarks, from the medieval Old City to the futuristic Flame Towers.',
                 included: [
@@ -36,12 +36,10 @@ class TourDetailsManager {
                 availability: 'Daily',
                 whatsappMessage: 'Hello! I want to book the Baku City Tour'
             },
-
             'gobustan': {
                 title: 'Gobustan & Mud Volcano Tour',
                 images: [
-                    'https://firebasestorage.googleapis.com/v0/b/caspianwavetravel-b9aa4.firebasestorage.app/o/gobustan-mud-volcano.jpg?alt=media&token=3012552c-c376-4635-9950-3af1e88aab95',
-                    'https://firebasestorage.googleapis.com/v0/b/caspianwavetravel-b9aa4.firebasestorage.app/o/Carousel-3.jpeg?alt=media&token=a9cb0897-25c5-4686-920b-9b9f2c284a71'
+                    'https://firebasestorage.googleapis.com/v0/b/caspianwavetravel-b9aa4.firebasestorage.app/o/gobustan-mud-volcano.jpg?alt=media&token=3012552c-c376-4635-9950-3af1e88aab95'
                 ],
                 description: 'Journey back in time to explore ancient rock carvings and experience the unique natural phenomenon of mud volcanoes in the Gobustan National Park.',
                 included: [
@@ -65,39 +63,6 @@ class TourDetailsManager {
                 availability: 'Daily',
                 whatsappMessage: 'Hello! I want to book the Gobustan & Mud Volcano Tour'
             },
-
-            // PACKAGES DATA
-            'baku-city-escape': {
-                title: 'Baku City Escape Package',
-                images: [
-                    'https://firebasestorage.googleapis.com/v0/b/caspianwavetravel-b9aa4.firebasestorage.app/o/package-1.jpg?alt=media&token=40a6477f-8fbf-4192-850a-7241717dec50'
-                ],
-                description: 'Experience the best of Baku with our all-inclusive 3-night package. Perfect for first-time visitors wanting to explore the capital\'s rich culture and modern attractions.',
-                included: [
-                    '3 nights hotel accommodation',
-                    'Daily breakfast',
-                    'Baku City Tour',
-                    'Airport transfers',
-                    '24/7 support',
-                    'All entrance fees'
-                ],
-                excluded: [
-                    'International flights',
-                    'Lunch and dinner',
-                    'Personal expenses',
-                    'Travel insurance'
-                ],
-                pricing: [
-                    { persons: '1 Person', price: '$299', description: 'Single occupancy' },
-                    { persons: '2 People', price: '$249 per person', description: 'Double occupancy' },
-                    { persons: '3+ People', price: '$229 per person', description: 'Group rate' }
-                ],
-                duration: '3 Nights / 4 Days',
-                groupSize: '1-10 people',
-                availability: 'Year-round',
-                whatsappMessage: 'Hello! I want to book the Baku City Escape Package'
-            },
-
             'complete-azerbaijan': {
                 title: 'Complete Azerbaijan Package',
                 images: [
@@ -126,39 +91,8 @@ class TourDetailsManager {
                 groupSize: '1-8 people',
                 availability: 'Year-round',
                 whatsappMessage: 'Hello! I want to book the Complete Azerbaijan Package'
-            },
-
-            'mountain-adventure': {
-                title: 'Mountain Adventure Package',
-                images: [
-                    'https://firebasestorage.googleapis.com/v0/b/caspianwavetravel-b9aa4.firebasestorage.app/o/package-3.jpg?alt=media&token=fb936535-ef75-4a56-b977-77bcb8e01997'
-                ],
-                description: 'Adventure through Azerbaijan\'s stunning mountain regions. Perfect for nature lovers and outdoor enthusiasts.',
-                included: [
-                    '4 nights accommodation',
-                    'All meals',
-                    'Mountain tours',
-                    'Equipment rental',
-                    'Professional guide',
-                    'All transfers'
-                ],
-                excluded: [
-                    'International flights',
-                    'Personal gear',
-                    'Travel insurance'
-                ],
-                pricing: [
-                    { persons: '1 Person', price: '$449', description: 'Single occupancy' },
-                    { persons: '2 People', price: '$399 per person', description: 'Double occupancy' },
-                    { persons: '3+ People', price: '$349 per person', description: 'Group rate' }
-                ],
-                duration: '4 Nights / 5 Days',
-                groupSize: '1-6 people',
-                availability: 'April - October',
-                whatsappMessage: 'Hello! I want to book the Mountain Adventure Package'
             }
-
-            // Add more tours and packages here as needed
+            // Add more tours here as needed
         };
     }
 
@@ -169,29 +103,27 @@ class TourDetailsManager {
 
     loadTourDetails() {
         const tourId = this.getTourIdFromURL();
+        console.log('Loading tour details for:', tourId);
         
         if (!tourId || !this.tourData[tourId]) {
-            // Tour not found - redirect to home page or show error
-            window.location.href = 'index.html';
+            document.getElementById('tour-content').innerHTML = `
+                <div style="text-align: center; padding: 50px;">
+                    <h2>Tour Not Found</h2>
+                    <p>Sorry, the tour you're looking for doesn't exist.</p>
+                    <a href="index.html" style="color: #0095da;">Return to Home</a>
+                </div>
+            `;
             return;
         }
 
-        const tour = this.tourData[tourId];
-        this.renderTourDetails(tour);
+        this.renderTourDetails(this.tourData[tourId]);
     }
 
     renderTourDetails(tour) {
-        // Update page title
+        console.log('Rendering tour:', tour.title);
         document.title = `${tour.title} - CaspianWaveTravel`;
-
-        // Render gallery
         this.renderGallery(tour.images);
-
-        // Render tour content
         this.renderTourContent(tour);
-
-        // Update WhatsApp button with tour-specific message
-        this.updateWhatsAppButton(tour.whatsappMessage);
     }
 
     renderGallery(images) {
@@ -204,13 +136,10 @@ class TourDetailsManager {
         images.forEach((image, index) => {
             galleryHTML += `
                 <div class="gallery-slide ${index === 0 ? 'active' : ''}">
-                    <img src="${image}" alt="${tour.title} ${index + 1}">
+                    <img src="${image}" alt="Tour Image ${index + 1}">
                 </div>
             `;
-            
-            dotsHTML += `
-                <span class="gallery-dot ${index === 0 ? 'active' : ''}" data-slide="${index}"></span>
-            `;
+            dotsHTML += `<span class="gallery-dot ${index === 0 ? 'active' : ''}" data-slide="${index}"></span>`;
         });
 
         galleryContainer.innerHTML = `
@@ -225,8 +154,11 @@ class TourDetailsManager {
 
     renderTourContent(tour) {
         const tourContent = document.getElementById('tour-content');
-        if (!tourContent) return;
-
+        if (!tourContent) {
+            console.error('tour-content element not found!');
+            return;
+        }
+        
         const includedList = tour.included.map(item => 
             `<li><i class="fas fa-check"></i> ${item}</li>`
         ).join('');
@@ -248,27 +180,23 @@ class TourDetailsManager {
                 <div class="tour-info">
                     <h1>${tour.title}</h1>
                     <p class="tour-description">${tour.description}</p>
-
                     <div class="details-grid">
                         <div class="included-section">
                             <h3><i class="fas fa-check-circle"></i> What's Included</h3>
                             <ul>${includedList}</ul>
                         </div>
-
                         <div class="excluded-section">
                             <h3><i class="fas fa-times-circle"></i> Not Included</h3>
                             <ul>${excludedList}</ul>
                         </div>
                     </div>
                 </div>
-
                 <div class="pricing-card">
                     <h3>Book This ${tour.title.includes('Package') ? 'Package' : 'Tour'}</h3>
                     ${pricingOptions}
                     <button class="book-now-btn" onclick="window.location.href='https://wa.me/994775700711?text=${encodeURIComponent(tour.whatsappMessage)}'">
                         <i class="fab fa-whatsapp"></i> Book on WhatsApp
                     </button>
-
                     <div style="text-align: center; margin-top: 15px; color: #666; font-size: 0.9rem;">
                         <p><i class="fas fa-clock"></i> Duration: ${tour.duration}</p>
                         <p><i class="fas fa-users"></i> Group Size: ${tour.groupSize}</p>
@@ -277,6 +205,8 @@ class TourDetailsManager {
                 </div>
             </div>
         `;
+        
+        console.log('Tour content rendered successfully');
     }
 
     initializeGallery() {
@@ -286,7 +216,6 @@ class TourDetailsManager {
         function showSlide(index) {
             slides.forEach(slide => slide.classList.remove('active'));
             dots.forEach(dot => dot.classList.remove('active'));
-            
             slides[index].classList.add('active');
             dots[index].classList.add('active');
         }
@@ -295,26 +224,14 @@ class TourDetailsManager {
             dot.addEventListener('click', () => showSlide(index));
         });
         
-        // Auto-advance gallery every 5 seconds
         setInterval(() => {
             const currentIndex = Array.from(slides).findIndex(slide => slide.classList.contains('active'));
             const nextIndex = (currentIndex + 1) % slides.length;
             showSlide(nextIndex);
         }, 5000);
     }
-
-    updateWhatsAppButton(message) {
-        const whatsappBtn = document.querySelector('.book-now-btn');
-        if (whatsappBtn) {
-            whatsappBtn.onclick = function() {
-                window.location.href = `https://wa.me/994775700711?text=${encodeURIComponent(message)}`;
-            };
-        }
-    }
 }
 
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    const tourManager = new TourDetailsManager();
-    tourManager.loadTourDetails();
-});
+// Make it available globally
+window.TourDetailsManager = TourDetailsManager;
+console.log('TourDetailsManager registered globally');

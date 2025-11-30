@@ -1,8 +1,22 @@
-// components-loader.js - Updated version for tour details page
+// components-loader.js - Fixed version for page-specific loading
 class ComponentLoader {
-    constructor() {
-        this.components = {};
-        this.isTourDetailsPage = window.location.pathname.includes('tour-details.html');
+   constructor() {
+    console.log('=== COMPONENTS LOADER STARTED ===');
+    console.log('Full URL:', window.location.href);
+    console.log('Pathname:', window.location.pathname);
+    
+    this.components = {};
+    this.currentPage = this.getCurrentPage();
+    
+    console.log('Detected page:', this.currentPage);
+}
+
+    getCurrentPage() {
+        const path = window.location.pathname;
+        if (path.includes('tour-details.html')) {
+            return 'tour-details';
+        }
+        return 'index';
     }
 
     // Load a single component
@@ -14,7 +28,7 @@ class ComponentLoader {
             const html = await response.text();
             this.components[componentName] = html;
             
-            // Insert into the page
+            // Insert into the page ONLY if container exists
             const container = document.getElementById(`${componentName}-container`);
             if (container) {
                 container.innerHTML = html;
@@ -27,17 +41,31 @@ class ComponentLoader {
         }
     }
 
+    // Load components based on current page
+    async loadPageComponents() {
+        if (this.currentPage === 'tour-details') {
+            await this.loadTourDetailsComponents();
+        } else {
+            await this.loadMainPageComponents();
+        }
+    }
+
     // Load only essential components for tour details page
     async loadTourDetailsComponents() {
+        console.log('Loading tour details page components');
         const essentialComponents = ['nav', 'footer'];
         const loadPromises = essentialComponents.map(component => 
             this.loadComponent(component)
         );
         await Promise.all(loadPromises);
+        
+        // Initialize tour details after components are loaded
+        this.initializeTourDetails();
     }
 
     // Load all components for main page
     async loadMainPageComponents() {
+        console.log('Loading main page components');
         const components = [
             'nav', 'header', 'services', 'packages', 
             'carousel', 'about', 'contact', 'footer'
@@ -47,35 +75,24 @@ class ComponentLoader {
             this.loadComponent(component)
         );
         await Promise.all(loadPromises);
-        this.onAllComponentsLoaded();
+        this.onMainPageLoaded();
     }
 
-    // Decide which components to load based on page
-    async loadPageSpecificComponents() {
-        if (this.isTourDetailsPage) {
-            console.log('Loading tour details page components');
-            await this.loadTourDetailsComponents();
-            // Initialize tour details functionality
-            this.initializeTourDetails();
-        } else {
-            console.log('Loading main page components');
-            await this.loadMainPageComponents();
-        }
-    }
-
-    // Initialize tour details page
+    // Initialize tour details functionality
     initializeTourDetails() {
-        // Load tour details functionality
-        if (typeof window.TourDetailsManager !== 'undefined') {
-            const tourManager = new window.TourDetailsManager();
-            tourManager.loadTourDetails();
-        } else {
-            console.log('TourDetailsManager not found');
-        }
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+            if (typeof window.TourDetailsManager !== 'undefined') {
+                const tourManager = new window.TourDetailsManager();
+                tourManager.loadTourDetails();
+            } else {
+                console.error('TourDetailsManager not found - make sure tour-details.js is loaded');
+            }
+        }, 100);
     }
 
-    // Called when all main page components are loaded
-    onAllComponentsLoaded() {
+    // Called when main page components are loaded
+    onMainPageLoaded() {
         this.initializeCarousel();
         this.initializeHeaderLoading();
     }
@@ -100,5 +117,5 @@ class ComponentLoader {
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     const loader = new ComponentLoader();
-    loader.loadPageSpecificComponents();
+    loader.loadPageComponents();
 });
