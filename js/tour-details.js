@@ -1,6 +1,8 @@
 // tour-details.js - UPDATED WITH SHOW MORE/LESS ITINERARY
 console.log('=== TOUR-DETAILS.JS LOADED ===');
 
+
+
 class TourDetailsManager {
     constructor() {
         console.log('TourDetailsManager initialized');
@@ -574,73 +576,169 @@ class TourDetailsManager {
         this.renderTourContent(tour);
     }
 
-    renderGallery(images) {
-        const mainImage = document.getElementById('main-image');
-        const sideImage1 = document.getElementById('side-image-1');
-        const sideImage2 = document.getElementById('side-image-2');
-        
-        console.log('Loading images:', images);
+   renderGallery(images) {
+    const mainImage = document.getElementById('main-image');
+    const sideImage1 = document.getElementById('side-image-1');
+    const sideImage2 = document.getElementById('side-image-2');
+    const imageCountElement = document.querySelector('.image-count');
+    
+    console.log('Loading images:', images);
 
-        // Set main image
-        if (images.length > 0 && mainImage) {
-            mainImage.src = images[0];
-        }
-
-        // Set side images
-        if (images.length > 1 && sideImage1) {
-            sideImage1.src = images[1];
-            sideImage1.parentElement.style.display = 'block';
-        } else if (sideImage1) {
-            sideImage1.parentElement.style.display = 'none';
-        }
-
-        if (images.length > 2 && sideImage2) {
-            sideImage2.src = images[2];
-            sideImage2.parentElement.style.display = 'block';
-        } else if (sideImage2) {
-            sideImage2.parentElement.style.display = 'none';
-        }
-
-        // Hide side images container if only one image
-        const sideImagesContainer = document.querySelector('.side-images');
-        if (images.length <= 1 && sideImagesContainer) {
-            sideImagesContainer.style.display = 'none';
-            document.querySelector('.main-image').style.flex = '1';
-        } else if (sideImagesContainer) {
-            sideImagesContainer.style.display = 'flex';
-            document.querySelector('.main-image').style.flex = '2';
-        }
-
-        // Setup click events
-        this.setupImageGrid();
+    // Set main image
+    if (images.length > 0 && mainImage) {
+        mainImage.src = images[0];
     }
+
+    // Set side images
+    if (images.length > 1 && sideImage1) {
+        sideImage1.src = images[1];
+        sideImage1.parentElement.style.display = 'block';
+    } else if (sideImage1) {
+        sideImage1.parentElement.style.display = 'none';
+    }
+
+    if (images.length > 2 && sideImage2) {
+        sideImage2.src = images[2];
+        sideImage2.parentElement.style.display = 'block';
+    } else if (sideImage2) {
+        sideImage2.parentElement.style.display = 'none';
+    }
+
+    // Update image count in the icon
+    if (imageCountElement && images.length > 3) {
+        imageCountElement.textContent = `+${images.length - 3} more`;
+    } else if (imageCountElement && images.length <= 3) {
+        imageCountElement.textContent = 'View All';
+    }
+
+    // Hide side images container if only one image
+    const sideImagesContainer = document.querySelector('.side-images');
+    if (images.length <= 1 && sideImagesContainer) {
+        sideImagesContainer.style.display = 'none';
+        document.querySelector('.main-image').style.flex = '1';
+    } else if (sideImagesContainer) {
+        sideImagesContainer.style.display = 'flex';
+        document.querySelector('.main-image').style.flex = '3'; // Changed from '2' to '3'
+    }
+
+    // Setup click events
+    this.setupImageGrid();
+}
 
     setupImageGrid() {
-        const mainImage = document.getElementById('main-image');
-        const sideImage1 = document.getElementById('side-image-1');
-        const sideImage2 = document.getElementById('side-image-2');
-        
-        // Simple click handlers
-        if (sideImage1 && sideImage1.src) {
-            sideImage1.parentElement.onclick = () => {
-                if (mainImage.src && sideImage1.src) {
-                    const temp = mainImage.src;
-                    mainImage.src = sideImage1.src;
-                    sideImage1.src = temp;
-                }
-            };
-        }
-        
-        if (sideImage2 && sideImage2.src) {
-            sideImage2.parentElement.onclick = () => {
-                if (mainImage.src && sideImage2.src) {
-                    const temp = mainImage.src;
-                    mainImage.src = sideImage2.src;
-                    sideImage2.src = temp;
-                }
-            };
-        }
+    const mainImage = document.getElementById('main-image');
+    const sideImage1 = document.getElementById('side-image-1');
+    const sideImage2 = document.getElementById('side-image-2');
+    
+    // Simple click handlers for side images
+    if (sideImage1 && sideImage1.src) {
+        sideImage1.parentElement.onclick = () => {
+            if (mainImage.src && sideImage1.src) {
+                const temp = mainImage.src;
+                mainImage.src = sideImage1.src;
+                sideImage1.src = temp;
+            }
+        };
     }
+    
+    if (sideImage2 && sideImage2.src) {
+        sideImage2.parentElement.onclick = () => {
+            if (mainImage.src && sideImage2.src) {
+                const temp = mainImage.src;
+                mainImage.src = sideImage2.src;
+                sideImage2.src = temp;
+            }
+        };
+    }
+    
+    // Setup gallery modal functionality if gallery exists
+    this.setupGalleryModal();
+}
+
+setupGalleryModal() {
+    const galleryModal = document.getElementById('gallery-modal');
+    const closeGalleryBtn = document.querySelector('.close-gallery');
+    const galleryImagesContainer = document.getElementById('gallery-images');
+    const galleryCounter = document.getElementById('gallery-counter');
+    
+    if (!galleryModal || !galleryImagesContainer) return;
+    
+    // Store current tour images for gallery
+    const tourId = this.getTourIdFromURL();
+    const tour = this.tourData[tourId];
+    
+    if (!tour || !tour.images) return;
+    
+    // Load gallery images
+    galleryImagesContainer.innerHTML = tour.images.map((img, index) => `
+        <div class="gallery-img" onclick="openFullImage(${index})">
+            <img src="${img}" alt="Gallery image ${index + 1}">
+        </div>
+    `).join('');
+    
+    // Update gallery counter
+    if (galleryCounter) {
+        galleryCounter.textContent = `1 / ${tour.images.length}`;
+    }
+    
+    // Setup close button
+    if (closeGalleryBtn) {
+        closeGalleryBtn.onclick = () => {
+            galleryModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        };
+    }
+    
+    // Close modal when clicking outside
+    galleryModal.onclick = (e) => {
+        if (e.target === galleryModal) {
+            galleryModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    };
+    
+    // Setup gallery navigation
+    this.setupGalleryNavigation(tour.images);
+}
+
+setupGalleryNavigation(images) {
+    let currentGalleryIndex = 0;
+    const galleryCounter = document.getElementById('gallery-counter');
+    const prevBtn = document.querySelector('.gallery-nav.prev');
+    const nextBtn = document.querySelector('.gallery-nav.next');
+    
+    const updateGalleryCounter = () => {
+        if (galleryCounter) {
+            galleryCounter.textContent = `${currentGalleryIndex + 1} / ${images.length}`;
+        }
+    };
+    
+    if (prevBtn) {
+        prevBtn.onclick = () => {
+            if (currentGalleryIndex > 0) {
+                currentGalleryIndex--;
+                updateGalleryCounter();
+            }
+        };
+    }
+    
+    if (nextBtn) {
+        nextBtn.onclick = () => {
+            if (currentGalleryIndex < images.length - 1) {
+                currentGalleryIndex++;
+                updateGalleryCounter();
+            }
+        };
+    }
+    
+    // Global function for gallery image click
+    window.openFullImage = (index) => {
+        currentGalleryIndex = index;
+        updateGalleryCounter();
+        // You could implement a lightbox here if needed
+        console.log('Opening full image at index:', index);
+    };
+}
 
     renderTourContent(tour) {
         const tourContent = document.getElementById('tour-content');
@@ -790,6 +888,36 @@ setupItineraryToggle() {
 // Make it available globally
 window.TourDetailsManager = TourDetailsManager;
 console.log('TourDetailsManager registered globally');
+
+// Global function to open gallery modal
+window.openGallery = () => {
+    const galleryModal = document.getElementById('gallery-modal');
+    if (galleryModal) {
+        galleryModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+};
+
+// Global functions for gallery navigation
+window.prevImage = () => {
+    // This will be handled by the setupGalleryNavigation method
+    const prevBtn = document.querySelector('.gallery-nav.prev');
+    if (prevBtn) prevBtn.click();
+};
+
+window.nextImage = () => {
+    // This will be handled by the setupGalleryNavigation method
+    const nextBtn = document.querySelector('.gallery-nav.next');
+    if (nextBtn) nextBtn.click();
+};
+
+window.closeGallery = () => {
+    const galleryModal = document.getElementById('gallery-modal');
+    if (galleryModal) {
+        galleryModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+};
 
 // Auto-initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {

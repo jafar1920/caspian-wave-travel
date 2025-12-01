@@ -3,32 +3,57 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 40px 20px;
+    min-height: 70vh;
 }
 
 /* IMAGE LAYOUT */
+/* IMAGE LAYOUT - SIMPLE & ELEGANT DESIGN */
+
+
+/* IMAGE LAYOUT - SIMPLE & ELEGANT DESIGN (BALANCED SIZE) */
 .tour-images-container {
     display: flex;
     gap: 15px;
     margin-bottom: 40px;
-    height: 300px; /* Slightly increased */
+    perspective: 1000px;
+    height: 360px; /* Increased from 320px */
 }
 
 .main-image {
-    flex: 2;
-    border-radius: 15px;
+    flex: 2.5; /* Decreased from 3 (less width) */
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transform-style: preserve-3d;
+    position: relative;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+}
+
+.main-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 149, 218, 0.1), transparent);
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.main-image:hover::before {
+    opacity: 1;
 }
 
 .main-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .main-image:hover img {
-    transform: scale(1.05);
+    transform: scale(1.08) rotate(0.5deg);
 }
 
 .side-images {
@@ -40,36 +65,46 @@
 
 .side-image {
     flex: 1;
-    border-radius: 12px;
+    border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    cursor: pointer;
     position: relative;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.side-image:hover {
+    transform: translateX(8px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.18);
 }
 
 .side-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .side-image:hover img {
-    transform: scale(1.05);
+    transform: scale(1.15);
 }
 
+/* Elegant overlay */
 .image-overlay {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0,0,0,0.3);
+    background: linear-gradient(135deg, rgba(0, 149, 218, 0.85), rgba(0, 191, 255, 0.85));
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.4s ease;
+    padding: 20px;
+    text-align: center;
 }
 
 .side-image:hover .image-overlay {
@@ -78,16 +113,125 @@
 
 .view-more {
     color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.view-more-subtitle {
+    color: rgba(255, 255, 255, 0.9);
     font-size: 0.9rem;
+    font-weight: 400;
+}
+
+/* Floating icon */
+.image-icon {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 12px 20px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    transform: translateY(10px);
+    opacity: 0;
+    transition: all 0.3s ease 0.1s;
+    z-index: 3;
+    min-width: 140px;
+}
+
+.main-image:hover .image-icon {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.image-icon i {
+    color: #0095da;
+    font-size: 1.2rem;
+}
+
+.image-count {
+    color: #00264d;
+    font-size: 0.95rem;
     font-weight: 600;
 }
 
-/* TOUR CONTENT */
+/* Responsive design */
+@media (max-width: 992px) {
+    .tour-images-container {
+        height: 320px; /* Slightly less on medium screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .tour-images-container {
+        flex-direction: column;
+        height: auto;
+        gap: 12px;
+    }
+    
+    .main-image {
+        height: 280px; /* Increased from 250px */
+        flex: 1; /* Full width on mobile */
+    }
+    
+    .side-images {
+        flex-direction: row;
+        height: 150px; /* Increased from 140px */
+    }
+    
+    .side-image:hover {
+        transform: translateY(-5px) scale(1.02);
+    }
+    
+    .image-icon {
+        min-width: 120px;
+        padding: 10px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tour-images-container {
+        margin-bottom: 30px;
+    }
+    
+    .main-image {
+        height: 240px; /* Increased from 220px */
+    }
+    
+    .side-images {
+        height: 130px; /* Increased from 120px */
+    }
+    
+    .image-icon {
+        min-width: 110px;
+        padding: 9px 15px;
+    }
+}
+
+/* For very large screens */
+@media (min-width: 1400px) {
+    .tour-images-container {
+        height: 380px; /* Slightly taller on large screens */
+    }
+    
+    .main-image {
+        flex: 2.2; /* Even less width on large screens */
+    }
+}
+/* TOUR CONTENT - FIXED */
 .tour-content {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 40px;
     margin-bottom: 50px;
+    align-items: start; /* Align items at the top */
 }
 
 .tour-info h1 {
@@ -96,6 +240,7 @@
     margin-bottom: 15px;
     padding-bottom: 10px;
     border-bottom: 2px solid #0095da;
+    word-wrap: break-word;
 }
 
 .tour-description {
@@ -107,6 +252,7 @@
     padding: 20px;
     border-radius: 10px;
     border-left: 4px solid #0095da;
+    word-wrap: break-word;
 }
 
 /* ITINERARY SECTION */
@@ -195,6 +341,7 @@
     gap: 8px;
     margin: 20px auto 0;
     width: fit-content;
+    flex-shrink: 0; /* Prevent button from shrinking */
 }
 
 .show-more-less:hover {
@@ -209,11 +356,6 @@
 /* Hidden days container */
 .hidden-days {
     display: none;
-}
-
-/* ALWAYS show the button - JavaScript will handle visibility */
-.show-more-less {
-    display: flex !important;
 }
 
 /* INCLUDED/EXCLUDED SECTIONS */
@@ -282,7 +424,7 @@
     font-size: 0.9rem;
 }
 
-/* PRICING CARD */
+/* PRICING CARD - FIXED TO PREVENT SHRINKING */
 .pricing-card {
     background: white;
     padding: 25px;
@@ -291,7 +433,11 @@
     border: 2px solid #0095da;
     position: sticky;
     top: 100px;
-    height: auto;
+    height: fit-content;
+    min-height: 400px; /* Minimum height to prevent excessive shrinking */
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0; /* Prevent the card itself from shrinking */
 }
 
 .pricing-card h3 {
@@ -301,6 +447,7 @@
     font-size: 1.4rem;
     padding-bottom: 10px;
     border-bottom: 2px solid #e0f0ff;
+    flex-shrink: 0; /* Prevent title from shrinking */
 }
 
 .price-option {
@@ -309,6 +456,7 @@
     border-radius: 10px;
     margin-bottom: 15px;
     border: 1px solid #e0f0ff;
+    flex-shrink: 0; /* Prevent price options from shrinking */
 }
 
 .price-option h4 {
@@ -340,11 +488,20 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
+    flex-shrink: 0; /* Prevent button from shrinking */
 }
 
 .book-now-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 149, 218, 0.3);
+}
+
+/* Additional info at bottom of pricing card */
+.pricing-card > div:last-child {
+    margin-top: auto; /* Push to bottom */
+    padding-top: 15px;
+    border-top: 1px solid #e0f0ff;
+    flex-shrink: 0;
 }
 
 /* RESPONSIVE DESIGN */
@@ -365,6 +522,7 @@
     
     .tour-content {
         grid-template-columns: 1fr;
+        gap: 30px;
     }
     
     .details-grid {
@@ -377,7 +535,13 @@
     
     .pricing-card {
         position: static;
-        margin-top: 30px;
+        margin-top: 0;
+        min-height: auto; /* Remove minimum height on mobile */
+        order: 1; /* Optional: show pricing card first on mobile */
+    }
+    
+    .tour-info {
+        order: 2; /* Optional: show main content after pricing card on mobile */
     }
     
     .itinerary-day {
@@ -402,4 +566,148 @@
         padding: 10px 20px;
         font-size: 0.9rem;
     }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    .tour-details-container {
+        padding: 20px 15px;
+    }
+    
+    .tour-images-container {
+        margin-bottom: 25px;
+    }
+    
+    .main-image {
+        height: 200px;
+    }
+    
+    .side-images {
+        height: 120px;
+    }
+    
+    .pricing-card {
+        padding: 20px 15px;
+    }
+}
+
+/* Gallery Modal */
+.gallery-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.gallery-content {
+    width: 90%;
+    max-width: 1200px;
+    max-height: 90vh;
+    background: #111;
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+}
+
+.gallery-header {
+    padding: 20px;
+    background: #1a1a1a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #333;
+}
+
+.gallery-header h3 {
+    color: white;
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.close-gallery {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 10px;
+    transition: color 0.3s ease;
+}
+
+.close-gallery:hover {
+    color: #0095da;
+}
+
+.gallery-images {
+    padding: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.gallery-img {
+    width: 100%;
+    height: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.gallery-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(0, 149, 218, 0.3);
+}
+
+.gallery-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gallery-controls {
+    padding: 20px;
+    background: #1a1a1a;
+    border-top: 1px solid #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+}
+
+.gallery-nav {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.gallery-nav:hover {
+    background: #0095da;
+    transform: scale(1.1);
+}
+
+.gallery-counter {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
 }
