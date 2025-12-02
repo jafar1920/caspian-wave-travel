@@ -1,7 +1,6 @@
-/* Enhanced Navbar */
 /* Enhanced Navbar - FIXED STICKY */
 nav {
-    position: fixed; /* Changed from sticky to fixed */
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
@@ -18,12 +17,7 @@ nav {
 
 /* Add padding to body to account for fixed navbar */
 body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
-    background-color: #f7f7f7;
-    scroll-behavior: smooth;
-    padding-top: 80px; /* Add this line - matches navbar height */
+    padding-top: 80px;
 }
 
 /* Logo + text with animations */
@@ -32,6 +26,7 @@ body {
     align-items: center;
     gap: 12px;
     flex: 1;
+    min-width: 160px;
     opacity: 0;
     animation: containerFade 0.8s ease-out 0.3s forwards;
 }
@@ -43,6 +38,7 @@ body {
     opacity: 0;
     transform: scale(0.5) rotate(-180deg);
     animation: logoSpin 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s forwards;
+    flex-shrink: 0;
 }
 
 .logo:hover {
@@ -55,6 +51,7 @@ body {
     opacity: 0;
     transform: translateX(-30px) scale(0.9);
     animation: textGlide 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s forwards;
+    flex-shrink: 0;
 }
 
 /* Enhanced nav links with centered underlines */
@@ -63,6 +60,8 @@ body {
     gap: 30px;
     justify-content: center;
     flex: 2;
+    flex-wrap: nowrap;
+    min-width: 0;
 }
 
 .nav-links a {
@@ -74,6 +73,8 @@ body {
     position: relative;
     transition: color 0.3s;
     text-align: center;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .nav-links a:after {
@@ -103,6 +104,7 @@ body {
     gap: 18px;
     flex: 1;
     justify-content: flex-end;
+    min-width: 160px;
 }
 
 .social-icons a {
@@ -115,6 +117,7 @@ body {
     background: rgba(0, 149, 218, 0.1);
     transition: all 0.3s ease;
     text-decoration: none;
+    flex-shrink: 0;
 }
 
 .social-icons a i {
@@ -133,4 +136,521 @@ body {
 .social-icons a:hover i {
     color: white;
     transform: scale(1.1);
+}
+
+/* Hamburger button - hidden by default */
+.nav-hamburger {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: rgb(0, 38, 77);
+    cursor: pointer;
+    padding: 10px;
+    margin-left: 15px;
+    transition: all 0.3s ease;
+    z-index: 1001;
+    flex-shrink: 0;
+}
+
+.nav-hamburger:hover {
+    color: rgb(0, 149, 218);
+    transform: scale(1.1);
+}
+
+/* ===== TABLET & MEDIUM SCREEN FIXES ===== */
+
+/* Large tablets and small laptops (901px - 1100px) */
+@media (min-width: 901px) and (max-width: 1100px) {
+    nav {
+        padding: 0 20px;
+        height: 75px;
+    }
+    
+    .logo-container {
+        min-width: 140px;
+    }
+    
+    .logo {
+        height: 45px;
+    }
+    
+    .logo-text {
+        display: none;
+    }
+    
+    .nav-links {
+        gap: 20px;
+    }
+    
+    .nav-links a {
+        font-size: 1rem;
+        padding: 8px 2px;
+    }
+    
+    .social-icons {
+        gap: 15px;
+        min-width: 140px;
+    }
+    
+    .social-icons a {
+        width: 38px;
+        height: 38px;
+    }
+}
+
+/* Medium tablets (769px - 900px) - NEST HUB FIX */
+@media (min-width: 769px) and (max-width: 900px) {
+    nav {
+        padding: 0 15px;
+        height: 70px;
+    }
+    
+    .logo-container {
+        min-width: 120px;
+    }
+    
+    .logo {
+        height: 40px;
+    }
+    
+    .logo-text {
+        display: none;
+    }
+    
+    .nav-links {
+        gap: 12px;
+    }
+    
+    .nav-links a {
+        font-size: 0.9rem;
+        padding: 8px 1px;
+    }
+    
+    .social-icons {
+        gap: 10px;
+        min-width: 120px;
+    }
+    
+    .social-icons a {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* ===== MOBILE FIXES (≤ 768px) ===== */
+
+/* For ALL mobile screens */
+@media (max-width: 768px) {
+    /* Hide regular nav links and social icons by default */
+    .nav-links:not(.mobile-active),
+    .social-icons:not(.mobile-active) {
+        display: none !important;
+    }
+    
+    /* Show hamburger */
+    .nav-hamburger {
+        display: block !important;
+        order: 3;
+        margin-left: auto;
+    }
+    
+    /* Adjust navbar for mobile */
+    nav {
+        flex-direction: row;
+        height: 70px;
+        padding: 0 15px;
+    }
+    
+    .logo-container {
+        flex: 1;
+    }
+    
+    .logo {
+        height: 40px;
+    }
+    
+    .logo-text {
+        display: none;
+    }
+    
+    body {
+        padding-top: 70px;
+    }
+}
+
+/* Small tablets (601px - 768px) */
+@media (min-width: 601px) and (max-width: 768px) {
+    nav {
+        height: 65px;
+        padding: 0 12px;
+    }
+    
+    .logo {
+        height: 38px;
+    }
+    
+    .nav-hamburger {
+        font-size: 1.6rem;
+        padding: 8px;
+    }
+    
+    body {
+        padding-top: 65px;
+    }
+}
+
+/* Mobile phones (≤ 600px) */
+@media (max-width: 600px) {
+    nav {
+        height: 60px;
+        padding: 0 10px;
+    }
+    
+    .logo {
+        height: 35px;
+    }
+    
+    .nav-hamburger {
+        font-size: 1.5rem;
+        padding: 6px;
+    }
+    
+    body {
+        padding-top: 60px;
+    }
+}
+
+/* iPhone SE (≤ 375px) */
+@media (max-width: 375px) {
+    nav {
+        height: 55px;
+        padding: 0 8px;
+    }
+    
+    .logo {
+        height: 30px;
+    }
+    
+    .nav-hamburger {
+        font-size: 1.3rem;
+        padding: 5px;
+    }
+    
+    body {
+        padding-top: 55px;
+    }
+}
+
+/* ===== SCROLLABLE MOBILE MENU FIX ===== */
+
+/* Create a container for the entire mobile menu */
+.mobile-menu-container {
+    display: none;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fdff 100%);
+    z-index: 999;
+    flex-direction: column;
+    animation: slideDown 0.3s ease;
+}
+
+.mobile-menu-container.active {
+    display: flex;
+}
+
+/* Scrollable area for nav links */
+.mobile-nav-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Fixed area for social icons at bottom */
+.mobile-social-fixed {
+    flex-shrink: 0;
+    padding: 20px;
+    border-top: 1px solid rgba(0, 149, 218, 0.1);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fdff 100%);
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+}
+
+/* Nav links in scrollable area */
+.mobile-nav-scroll .nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.mobile-nav-scroll .nav-links a {
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(0, 149, 218, 0.1);
+    text-align: center;
+    font-size: 1.1rem;
+    color: rgb(0, 38, 77);
+    font-weight: 600;
+    word-break: break-word;
+    white-space: normal;
+    line-height: 1.4;
+    transition: all 0.3s ease;
+}
+
+.mobile-nav-scroll .nav-links a:hover {
+    color: rgb(0, 149, 218);
+    background: rgba(0, 149, 218, 0.05);
+}
+
+.mobile-nav-scroll .nav-links a:last-child {
+    border-bottom: none;
+}
+
+.mobile-nav-scroll .nav-links a:after {
+    display: none;
+}
+
+/* Social icons in fixed area */
+.mobile-social-fixed .social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+}
+
+.mobile-social-fixed .social-icons a {
+    width: 45px;
+    height: 45px;
+    background: rgba(0, 149, 218, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.mobile-social-fixed .social-icons a:hover {
+    background: rgb(0, 149, 218);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 149, 218, 0.3);
+}
+
+.mobile-social-fixed .social-icons a i {
+    font-size: 1.3rem;
+    color: rgb(0, 38, 77);
+    transition: 0.3s ease;
+}
+
+.mobile-social-fixed .social-icons a:hover i {
+    color: white;
+}
+
+/* Update existing CSS to use new structure */
+@media (max-width: 768px) {
+    /* Hide regular elements when mobile menu is active */
+    .nav-links.mobile-active,
+    .social-icons.mobile-active {
+        display: none !important;
+    }
+    
+    /* Hide old mobile menu styles */
+    .nav-links.mobile-active,
+    .social-icons.mobile-active {
+        display: none !important;
+    }
+    
+    /* Adjust mobile menu container position for different navbar heights */
+    .mobile-menu-container {
+        top: 70px;
+    }
+}
+
+/* Adjust for different screen sizes */
+@media (max-width: 600px) {
+    .mobile-menu-container {
+        top: 65px;
+    }
+    
+    .mobile-nav-scroll {
+        padding: 15px;
+    }
+    
+    .mobile-nav-scroll .nav-links a {
+        padding: 12px 0;
+        font-size: 1rem;
+    }
+    
+    .mobile-social-fixed {
+        padding: 15px;
+        gap: 20px;
+    }
+    
+    .mobile-social-fixed .social-icons a {
+        width: 42px;
+        height: 42px;
+    }
+}
+
+@media (max-width: 480px) {
+    .mobile-menu-container {
+        top: 60px;
+    }
+    
+    .mobile-nav-scroll {
+        padding: 12px;
+    }
+    
+    .mobile-nav-scroll .nav-links a {
+        padding: 10px 0;
+        font-size: 0.95rem;
+    }
+    
+    .mobile-social-fixed {
+        padding: 12px;
+        gap: 18px;
+    }
+    
+    .mobile-social-fixed .social-icons a {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 375px) {
+    .mobile-menu-container {
+        top: 55px;
+    }
+    
+    .mobile-nav-scroll {
+        padding: 10px;
+    }
+    
+    .mobile-nav-scroll .nav-links a {
+        padding: 8px 0;
+        font-size: 0.9rem;
+    }
+    
+    .mobile-social-fixed {
+        padding: 10px;
+        gap: 15px;
+    }
+    
+    .mobile-social-fixed .social-icons a {
+        width: 38px;
+        height: 38px;
+    }
+}
+
+/* Landscape phones - more vertical space */
+@media (max-width: 768px) and (orientation: landscape) {
+    .mobile-nav-scroll {
+        max-height: 70vh;
+    }
+    
+    .mobile-nav-scroll .nav-links a {
+        padding: 10px 0;
+    }
+}
+
+/* Adjustments for very short screens */
+@media (max-height: 500px) {
+    .mobile-nav-scroll .nav-links a {
+        padding: 8px 0;
+        font-size: 0.9rem;
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes containerFade {
+    to { opacity: 1; }
+}
+
+@keyframes logoSpin {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) rotate(-180deg);
+    }
+    70% {
+        opacity: 1;
+        transform: scale(1.1) rotate(10deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0);
+    }
+}
+
+@keyframes textGlide {
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== OLD MOBILE MENU STYLES - REMOVE OR DISABLE ===== */
+/* These styles are replaced by the scrollable menu above */
+
+@media (max-width: 768px) {
+    /* Hide old mobile menu styles */
+    .nav-links.mobile-active,
+    .social-icons.mobile-active {
+        display: none !important;
+    }
+}
+
+/* ===== QUICK FIX FOR MOBILE MENU VISIBILITY ===== */
+
+/* Force the mobile menu to show content */
+.mobile-menu-container.active {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Make sure the content inside is visible */
+.mobile-menu-container.active .mobile-nav-scroll,
+.mobile-menu-container.active .mobile-social-fixed {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Override any conflicting styles */
+@media (max-width: 768px) {
+    .mobile-menu-container {
+        background: white !important;
+        z-index: 9999 !important;
+    }
+    
+    .mobile-nav-scroll .nav-links {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    
+    .mobile-nav-scroll .nav-links a {
+        color: #00264d !important;
+        font-weight: 600 !important;
+        padding: 15px 0 !important;
+        border-bottom: 1px solid rgba(0, 149, 218, 0.1) !important;
+    }
+    
+    .mobile-social-fixed .social-icons {
+        display: flex !important;
+        justify-content: center !important;
+        gap: 25px !important;
+    }
 }

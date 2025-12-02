@@ -19,26 +19,9 @@
     right: 70px;
   }
 
-  nav {
-    flex-direction: column;
-    height: auto;
-    padding: 15px;
-    gap: 15px;
-  }
-  
-  .logo-container, .nav-links, .social-icons {
-    flex: none;
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .nav-links {
-    gap: 15px;
-    flex-wrap: wrap;
-  }
-  
-  .social-icons {
-    gap: 15px;
+  /* Body padding adjustment for mobile */
+  body {
+    padding-top: 70px;
   }
   
   .header-content {
@@ -121,13 +104,13 @@
   }
 }
 
-@media (max-width: 480px) {
-  .nav-links {
-    flex-direction: column;
-    gap: 10px;
-    text-align: center;
+@media (max-width: 600px) {
+  body {
+    padding-top: 65px;
   }
-  
+}
+
+@media (max-width: 480px) {
   .header-text h1 {
     font-size: 1.8rem;
   }
@@ -203,3 +186,6 @@
     justify-content: center;
   }
 }
+
+/* REMOVE everything below this line from responsive.css */
+/* Keep navbar responsive styles ONLY in navbar.css */
