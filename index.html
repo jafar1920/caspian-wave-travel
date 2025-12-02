@@ -10,45 +10,53 @@
 </head>
 
 <body>
-  <!-- Navigation -->
-  <div id="nav-container"></div>
-
-  <!-- Header -->
-  <div id="header-container"></div>
-
-  <!-- Main Content -->
-  <main>
-    <!-- Services Section -->
-    <div id="services-container"></div>
+     <div id="page-loader" class="page-loader" style="display: none;">
+        <div class="loader-spinner"></div>
+        <p class="loader-text">Loading your Caspian Wave experience...</p>
+    </div>
     
-    <!-- After services section -->
-    <div id="packages-container"></div>
+    <!-- Navigation - ONLY ONE! -->
+    <div id="nav-container"></div>
 
-    <!-- Customer Photos Carousel -->
-    <div id="carousel-container"></div>
+    <!-- Header -->
+    <div id="header-container"></div>
 
-    <!-- About Section -->
-    <div id="about-container"></div>
+    <!-- Main Content -->
+    <main>
+        <!-- Services Section -->
+        <div id="services-container"></div>
+        
+        <!-- After services section -->
+        <div id="packages-container"></div>
 
-    <!-- Contact Section -->
-    <div id="contact-container"></div>
-  </main>
+        <!-- Customer Photos Carousel -->
+        <div id="carousel-container"></div>
 
-  <!-- Footer -->
-  <div id="footer-container"></div>
+        <!-- About Section -->
+        <div id="about-container"></div>
 
-  <!-- WhatsApp Button (LOADED DIRECTLY - NOT IN CONTAINER) -->
-  <a href="https://wa.me/994775700711" class="floating-whatsapp" target="_blank">
-    <i class="fab fa-whatsapp"></i>
-    <div class="animations"></div>
-    <span class="pulse-ring"></span>
-    <span class="pulse-ring pulse-ring-2"></span>
-    <span class="notification-badge"></span>
-    <span class="tooltip-arrow"></span>
-  </a>
+        <!-- Contact Section -->
+        <div id="contact-container"></div>
+    </main>
 
-  <!-- JavaScript -->
-  <script src="js/components-loader.js"></script>
-  <script src="js/carousel.js"></script>
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/994775700711" class="floating-whatsapp" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+        <div class="animations"></div>
+        <span class="pulse-ring"></span>
+        <span class="pulse-ring pulse-ring-2"></span>
+        <span class="notification-badge"></span>
+        <span class="tooltip-arrow"></span>
+    </a>
+
+    <!-- JavaScript -->
+    <script src="js/components-loader.js"></script>
+    <script src="js/carousel.js"></script>
+     <script src="js/hash-scroll-handler.js"></script>
+
+  
 </body>
 </html>

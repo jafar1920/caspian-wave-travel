@@ -8,8 +8,37 @@ class ComponentLoader {
     this.components = {};
     this.currentPage = this.getCurrentPage();
     
+    // === ADDED: Cache for storing loaded components ===
+    this.componentCache = new Map();
+    
     console.log('Detected page:', this.currentPage);
-}
+    
+    // === ADDED: Show loader immediately ===
+    this.showLoader();
+  }
+
+  // === ADDED: Show loading indicator ===
+  showLoader() {
+    const loader = document.getElementById('page-loader');
+    if (loader) {
+      loader.style.display = 'flex';
+    }
+  }
+
+  // === ADDED: Hide loading indicator ===
+  hideLoader() {
+    const loader = document.getElementById('page-loader');
+    if (loader) {
+      // Add fade-out class for smooth transition
+      loader.classList.add('fade-out');
+      
+      // Remove from DOM after animation completes
+      setTimeout(() => {
+        loader.style.display = 'none';
+        loader.classList.remove('fade-out');
+      }, 300);
+    }
+  }
 
     getCurrentPage() {
         const path = window.location.pathname;
@@ -21,23 +50,40 @@ class ComponentLoader {
 
     // Load a single component
     async loadComponent(componentName) {
+        // === ADDED: Check cache first ===
+        if (this.componentCache.has(componentName)) {
+            console.log(`Loading ${componentName} from cache`);
+            const cachedHtml = this.componentCache.get(componentName);
+            this.insertComponent(componentName, cachedHtml);
+            return true;
+        }
+        
         try {
             const response = await fetch(`components/${componentName}.html`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             
             const html = await response.text();
+            
+            // === ADDED: Cache the HTML ===
+            this.componentCache.set(componentName, html);
+            
             this.components[componentName] = html;
             
             // Insert into the page ONLY if container exists
-            const container = document.getElementById(`${componentName}-container`);
-            if (container) {
-                container.innerHTML = html;
-            }
+            this.insertComponent(componentName, html);
             
             return true;
         } catch (error) {
             console.error(`Failed to load ${componentName}:`, error);
             return false;
+        }
+    }
+
+    // === ADDED: Helper method for inserting components ===
+    insertComponent(componentName, html) {
+        const container = document.getElementById(`${componentName}-container`);
+        if (container) {
+            container.innerHTML = html;
         }
     }
 
@@ -48,6 +94,9 @@ class ComponentLoader {
         } else {
             await this.loadMainPageComponents();
         }
+        
+        // === ADDED: Hide loader when all components are loaded ===
+        this.hideLoader();
     }
 
     // Load only essential components for tour details page

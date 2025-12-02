@@ -8,7 +8,13 @@
     <link rel="stylesheet" href="css/tour-details.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body>
+    <div id="page-loader" class="page-loader" style="display: none;">
+        <div class="loader-spinner"></div>
+        <p class="loader-text">Loading your Caspian Wave experience...</p>
+    </div>
+
     <!-- Navigation -->
     <div id="nav-container"></div>
 
@@ -17,20 +23,20 @@
         <div class="tour-images-container">
             <div class="main-image">
                 <img src="" alt="Main tour image" id="main-image">
-                <div class="image-icon" onclick="openGallery()">
+                <div class="image-icon" data-action="open-gallery">
                     <i class="fas fa-images"></i>
                     <span class="image-count" id="image-count">View All</span>
                 </div>
             </div>
             <div class="side-images">
-                <div class="side-image" onclick="switchToImage(1)">
+                <div class="side-image" data-action="switch-image">
                     <img src="" alt="Tour image 2" id="side-image-1">
                     <div class="image-overlay">
                         <span class="view-more">View</span>
                         <span class="view-more-subtitle">Click to expand</span>
                     </div>
                 </div>
-                <div class="side-image" onclick="switchToImage(2)">
+                <div class="side-image" data-action="switch-image">
                     <img src="" alt="Tour image 3" id="side-image-2">
                     <div class="image-overlay">
                         <span class="view-more">View</span>
@@ -40,26 +46,43 @@
             </div>
         </div>
 
-        <!-- Gallery Modal (hidden by default) -->
+        <!-- Gallery Modal -->
         <div class="gallery-modal" id="gallery-modal">
             <div class="gallery-content">
                 <div class="gallery-header">
-                    <h3>Tour Gallery</h3>
-                    <button class="close-gallery" onclick="closeGallery()">
+                    <div class="gallery-info">
+                        <h3>Tour Gallery</h3>
+                        <span class="gallery-counter" id="gallery-counter">1 / 0</span>
+                    </div>
+                    <button class="close-gallery">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                <div class="gallery-images" id="gallery-images">
-                    <!-- Images will be loaded dynamically -->
-                </div>
-                <div class="gallery-controls">
-                    <button class="gallery-nav prev" onclick="prevImage()">
+
+                <!-- Full Screen View -->
+                <div class="gallery-full-view" id="gallery-full-view">
+                    <button class="lightbox-nav prev">
                         <i class="fas fa-chevron-left"></i>
                     </button>
-                    <span class="gallery-counter" id="gallery-counter">1 / 0</span>
-                    <button class="gallery-nav next" onclick="nextImage()">
+
+                    <div class="lightbox-image-container">
+                        <img id="lightbox-image" src="" alt="Gallery Image">
+                        <div class="image-info">
+                            <span id="image-number">1 / 0</span>
+                            <button class="zoom-btn">
+                                <i class="fas fa-search-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button class="lightbox-nav next">
                         <i class="fas fa-chevron-right"></i>
                     </button>
+                </div>
+
+                <!-- Thumbnail Grid -->
+                <div class="gallery-thumbnails" id="gallery-thumbnails">
+                    <!-- Thumbnails will be loaded dynamically -->
                 </div>
             </div>
         </div>
@@ -73,7 +96,7 @@
     <!-- Footer -->
     <div id="footer-container"></div>
 
-    <!-- WhatsApp Button WITH ALL ANIMATIONS RESTORED -->
+    <!-- WhatsApp Button -->
     <a href="https://wa.me/994775700711" class="floating-whatsapp" target="_blank">
         <i class="fab fa-whatsapp"></i>
         <div class="animations"></div>
@@ -85,55 +108,75 @@
 
     <!-- JavaScript -->
     <script src="js/components-loader.js"></script>
-    
+
     <!-- Load modular tour details files IN CORRECT ORDER -->
-    <script src="js/tour-details/tour-data.js"></script>
     <script src="js/tour-details/image-handler.js"></script>
+    <script src="js/tour-details/tour-data.js"></script>
     <script src="js/tour-details/itinerary-handler.js"></script>
     <script src="js/tour-details/tour-renderer.js"></script>
     <script src="js/tour-details/tour-manager.js"></script>
     <script src="js/tour-details/init.js"></script>
-    
+
+    <!-- Simple fallback script -->
     <script>
-        // Global functions for image switching
-        window.switchToImage = function(imageIndex) {
-            const mainImage = document.getElementById('main-image');
-            const sideImage1 = document.getElementById('side-image-1');
-            const sideImage2 = document.getElementById('side-image-2');
+        // Simple fallback to ensure gallery works
+        window.addEventListener('load', function() {
+            console.log('📱 Tour Details Page Fully Loaded');
             
-            if (imageIndex === 1 && mainImage && sideImage1 && sideImage1.src) {
-                const temp = mainImage.src;
-                mainImage.src = sideImage1.src;
-                sideImage1.src = temp;
-            } else if (imageIndex === 2 && mainImage && sideImage2 && sideImage2.src) {
-                const temp = mainImage.src;
-                mainImage.src = sideImage2.src;
-                sideImage2.src = temp;
-            }
-        };
-        
-        // Global functions for gallery modal
-        // Note: These are now defined in init.js, but we keep them here for backward compatibility
-        
-        // Close gallery when clicking outside
-        document.addEventListener('click', function(event) {
-            const galleryModal = document.getElementById('gallery-modal');
-            const galleryContent = document.querySelector('.gallery-content');
-            
-            if (galleryModal && galleryModal.style.display === 'flex' && 
-                !galleryContent.contains(event.target) && 
-                !event.target.closest('.image-icon') &&
-                !event.target.closest('.side-image')) {
-                closeGallery();
-            }
-        });
-        
-        // Close gallery with ESC key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeGallery();
-            }
+            // Check if imageHandler was properly initialized
+            setTimeout(() => {
+                const imageHandler = window.imageHandler || window._imageHandlerInstance;
+                
+                if (imageHandler) {
+                    console.log('✅ ImageHandler found:', imageHandler.constructor.name);
+                    
+                    // If images are already loaded, ensure event listeners are set up
+                    if (imageHandler.images && imageHandler.images.length > 0) {
+                        console.log(`📸 ${imageHandler.images.length} images ready`);
+                        
+                        // Force re-setup of event listeners as a safety measure
+                        if (typeof imageHandler.setupAllEventListeners === 'function') {
+                            console.log('🔧 Ensuring event listeners are set up');
+                            imageHandler.setupAllEventListeners();
+                        }
+                    }
+                } else {
+                    console.warn('⚠️ ImageHandler not found - images may not work properly');
+                }
+            }, 1000); // Give modules time to load
         });
     </script>
+
+    <script>
+// BACKUP FIX FOR NAV LINKS ON TOUR-DETAILS PAGE
+document.addEventListener('DOMContentLoaded', function() {
+    if (!window.location.pathname.includes('tour-details.html')) return;
+    
+    console.log('🔧 Applying backup fix for tour-details navigation...');
+    
+    // Fix links after a delay (in case nav loads later)
+    setTimeout(function() {
+        const navLinks = document.querySelectorAll('nav a[href^="#"]');
+        
+        navLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && href.startsWith('#') && !href.includes('index.html')) {
+                // Change #something to index.html#something
+                link.setAttribute('href', 'index.html' + href);
+                
+                // Add aggressive click handler as backup
+                link.addEventListener('click', function(e) {
+                    if (window.location.pathname.includes('tour-details.html')) {
+                        e.preventDefault();
+                        window.location.href = 'index.html' + href;
+                    }
+                });
+            }
+        });
+        
+        console.log(`✅ Fixed ${navLinks.length} navigation links`);
+    }, 1000);
+});
+</script>
 </body>
 </html>

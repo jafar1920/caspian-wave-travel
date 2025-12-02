@@ -7,20 +7,16 @@
 }
 
 /* IMAGE LAYOUT */
-/* IMAGE LAYOUT - SIMPLE & ELEGANT DESIGN */
-
-
-/* IMAGE LAYOUT - SIMPLE & ELEGANT DESIGN (BALANCED SIZE) */
 .tour-images-container {
     display: flex;
     gap: 15px;
     margin-bottom: 40px;
     perspective: 1000px;
-    height: 360px; /* Increased from 320px */
+    height: 360px;
 }
 
 .main-image {
-    flex: 2.5; /* Decreased from 3 (less width) */
+    flex: 2.5;
     border-radius: 16px;
     overflow: hidden;
     transform-style: preserve-3d;
@@ -165,7 +161,7 @@
 /* Responsive design */
 @media (max-width: 992px) {
     .tour-images-container {
-        height: 320px; /* Slightly less on medium screens */
+        height: 320px;
     }
 }
 
@@ -177,13 +173,13 @@
     }
     
     .main-image {
-        height: 280px; /* Increased from 250px */
-        flex: 1; /* Full width on mobile */
+        height: 280px;
+        flex: 1;
     }
     
     .side-images {
         flex-direction: row;
-        height: 150px; /* Increased from 140px */
+        height: 150px;
     }
     
     .side-image:hover {
@@ -202,11 +198,11 @@
     }
     
     .main-image {
-        height: 240px; /* Increased from 220px */
+        height: 240px;
     }
     
     .side-images {
-        height: 130px; /* Increased from 120px */
+        height: 130px;
     }
     
     .image-icon {
@@ -218,20 +214,21 @@
 /* For very large screens */
 @media (min-width: 1400px) {
     .tour-images-container {
-        height: 380px; /* Slightly taller on large screens */
+        height: 380px;
     }
     
     .main-image {
-        flex: 2.2; /* Even less width on large screens */
+        flex: 2.2;
     }
 }
-/* TOUR CONTENT - FIXED */
+
+/* TOUR CONTENT */
 .tour-content {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 40px;
     margin-bottom: 50px;
-    align-items: start; /* Align items at the top */
+    align-items: start;
 }
 
 .tour-info h1 {
@@ -341,7 +338,7 @@
     gap: 8px;
     margin: 20px auto 0;
     width: fit-content;
-    flex-shrink: 0; /* Prevent button from shrinking */
+    flex-shrink: 0;
 }
 
 .show-more-less:hover {
@@ -424,7 +421,7 @@
     font-size: 0.9rem;
 }
 
-/* PRICING CARD - FIXED TO PREVENT SHRINKING */
+/* PRICING CARD */
 .pricing-card {
     background: white;
     padding: 25px;
@@ -434,10 +431,10 @@
     position: sticky;
     top: 100px;
     height: fit-content;
-    min-height: 400px; /* Minimum height to prevent excessive shrinking */
+    min-height: 400px;
     display: flex;
     flex-direction: column;
-    flex-shrink: 0; /* Prevent the card itself from shrinking */
+    flex-shrink: 0;
 }
 
 .pricing-card h3 {
@@ -447,7 +444,7 @@
     font-size: 1.4rem;
     padding-bottom: 10px;
     border-bottom: 2px solid #e0f0ff;
-    flex-shrink: 0; /* Prevent title from shrinking */
+    flex-shrink: 0;
 }
 
 .price-option {
@@ -456,7 +453,7 @@
     border-radius: 10px;
     margin-bottom: 15px;
     border: 1px solid #e0f0ff;
-    flex-shrink: 0; /* Prevent price options from shrinking */
+    flex-shrink: 0;
 }
 
 .price-option h4 {
@@ -488,7 +485,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    flex-shrink: 0; /* Prevent button from shrinking */
+    flex-shrink: 0;
 }
 
 .book-now-btn:hover {
@@ -498,7 +495,7 @@
 
 /* Additional info at bottom of pricing card */
 .pricing-card > div:last-child {
-    margin-top: auto; /* Push to bottom */
+    margin-top: auto;
     padding-top: 15px;
     border-top: 1px solid #e0f0ff;
     flex-shrink: 0;
@@ -506,20 +503,6 @@
 
 /* RESPONSIVE DESIGN */
 @media (max-width: 768px) {
-    .tour-images-container {
-        flex-direction: column;
-        height: auto;
-    }
-    
-    .main-image {
-        height: 250px;
-    }
-    
-    .side-images {
-        flex-direction: row;
-        height: 150px;
-    }
-    
     .tour-content {
         grid-template-columns: 1fr;
         gap: 30px;
@@ -536,12 +519,7 @@
     .pricing-card {
         position: static;
         margin-top: 0;
-        min-height: auto; /* Remove minimum height on mobile */
-        order: 1; /* Optional: show pricing card first on mobile */
-    }
-    
-    .tour-info {
-        order: 2; /* Optional: show main content after pricing card on mobile */
+        min-height: auto;
     }
     
     .itinerary-day {
@@ -568,22 +546,9 @@
     }
 }
 
-/* Extra small devices */
 @media (max-width: 480px) {
     .tour-details-container {
         padding: 20px 15px;
-    }
-    
-    .tour-images-container {
-        margin-bottom: 25px;
-    }
-    
-    .main-image {
-        height: 200px;
-    }
-    
-    .side-images {
-        height: 120px;
     }
     
     .pricing-card {
@@ -591,7 +556,7 @@
     }
 }
 
-/* Gallery Modal */
+/* ===== GALLERY MODAL ===== */
 .gallery-modal {
     position: fixed;
     top: 0;
@@ -601,95 +566,60 @@
     background: rgba(0, 0, 0, 0.95);
     z-index: 1000;
     display: none;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.3s ease;
+    animation: modalFadeIn 0.3s ease;
 }
 
-@keyframes fadeIn {
+@keyframes modalFadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
 }
 
 .gallery-content {
-    width: 90%;
-    max-width: 1200px;
-    max-height: 90vh;
-    background: #111;
-    border-radius: 15px;
+    width: 95%;
+    max-width: 1400px;
+    height: 95vh;
+    margin: 2.5vh auto;
+    background: #0a0a0a;
+    border-radius: 20px;
     overflow: hidden;
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
 }
 
 .gallery-header {
-    padding: 20px;
-    background: #1a1a1a;
+    padding: 20px 30px;
+    background: #111;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #333;
+    flex-shrink: 0;
+}
+
+.gallery-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
 .gallery-header h3 {
     color: white;
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.gallery-counter {
+    color: #0095da;
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: rgba(0, 149, 218, 0.1);
+    padding: 5px 15px;
+    border-radius: 20px;
 }
 
 .close-gallery {
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 10px;
-    transition: color 0.3s ease;
-}
-
-.close-gallery:hover {
-    color: #0095da;
-}
-
-.gallery-images {
-    padding: 30px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 20px;
-    max-height: 70vh;
-    overflow-y: auto;
-}
-
-.gallery-img {
-    width: 100%;
-    height: 200px;
-    border-radius: 10px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.gallery-img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 25px rgba(0, 149, 218, 0.3);
-}
-
-.gallery-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.gallery-controls {
-    padding: 20px;
-    background: #1a1a1a;
-    border-top: 1px solid #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 30px;
-}
-
-.gallery-nav {
     background: rgba(255, 255, 255, 0.1);
     border: none;
     color: white;
@@ -697,17 +627,245 @@
     height: 50px;
     border-radius: 50%;
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-gallery:hover {
+    background: #ff4444;
+    transform: rotate(90deg);
+}
+
+/* Full Screen View */
+.gallery-full-view {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    position: relative;
+    background: #000;
+}
+
+.lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+}
+
+.lightbox-nav:hover {
+    background: rgba(0, 149, 218, 0.8);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.lightbox-nav.prev {
+    left: 30px;
+}
+
+.lightbox-nav.next {
+    right: 30px;
+}
+
+.lightbox-image-container {
+    position: relative;
+    max-width: 90%;
+    max-height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#lightbox-image {
+    max-width: 100%;
+    max-height: 70vh;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    cursor: zoom-in;
+    transition: transform 0.3s ease;
+}
+
+#lightbox-image.zoomed {
+    cursor: zoom-out;
+    transform: scale(1.5);
+}
+
+.image-info {
+    position: absolute;
+    bottom: -50px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    color: white;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+#image-number {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.zoom-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.1rem;
     transition: all 0.3s ease;
 }
 
-.gallery-nav:hover {
+.zoom-btn:hover {
     background: #0095da;
     transform: scale(1.1);
 }
 
-.gallery-counter {
-    color: white;
-    font-size: 1.1rem;
-    font-weight: 600;
+/* Thumbnail Grid */
+.gallery-thumbnails {
+    padding: 20px 30px;
+    background: #111;
+    border-top: 1px solid #333;
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    flex-shrink: 0;
+    scrollbar-width: thin;
+    scrollbar-color: #0095da #222;
+}
+
+.gallery-thumbnails::-webkit-scrollbar {
+    height: 8px;
+}
+
+.gallery-thumbnails::-webkit-scrollbar-track {
+    background: #222;
+    border-radius: 4px;
+}
+
+.gallery-thumbnails::-webkit-scrollbar-thumb {
+    background: #0095da;
+    border-radius: 4px;
+}
+
+.thumbnail {
+    width: 100px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    flex-shrink: 0;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.thumbnail:hover {
+    transform: translateY(-5px);
+    border-color: #0095da;
+}
+
+.thumbnail.active {
+    border-color: #0095da;
+    box-shadow: 0 5px 15px rgba(0, 149, 218, 0.3);
+}
+
+.thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Responsive Gallery */
+@media (max-width: 768px) {
+    .gallery-content {
+        width: 100%;
+        height: 100vh;
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    .gallery-header {
+        padding: 15px 20px;
+    }
+    
+    .gallery-header h3 {
+        font-size: 1.4rem;
+    }
+    
+    .gallery-full-view {
+        padding: 15px;
+    }
+    
+    .lightbox-nav {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+    
+    .lightbox-nav.prev {
+        left: 10px;
+    }
+    
+    .lightbox-nav.next {
+        right: 10px;
+    }
+    
+    .image-info {
+        bottom: -40px;
+        padding: 10px;
+    }
+    
+    .gallery-thumbnails {
+        padding: 15px 20px;
+    }
+    
+    .thumbnail {
+        width: 80px;
+        height: 60px;
+    }
+}
+
+/* ===== IMAGE TRANSITION ANIMATIONS ===== */
+#lightbox-image {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+}
+
+/* Fade in animation for image changes */
+@keyframes imageFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.image-changing {
+    animation: imageFadeIn 0.3s ease-out;
 }
