@@ -74,5 +74,5 @@ header.image-loaded::before {
 .header-text .contact-btn:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.35);
-    background: rgb(38, 55, 63);
+    background:rgb(0, 161, 221);
 }
