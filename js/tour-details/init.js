@@ -1,7 +1,7 @@
-// js/tour-details/init.js
+// js/tour-details/init.js - UPDATED VERSION
 console.log('=== TOUR DETAILS INIT MODULE LOADED ===');
 
-// Global functions for gallery modal
+// Global functions for gallery modal (unchanged)
 window.openGallery = function() {
     const galleryModal = document.getElementById('gallery-modal');
     if (galleryModal) {
@@ -28,26 +28,46 @@ window.nextImage = function() {
     if (nextBtn) nextBtn.click();
 };
 
+// NEW: Async tour loading
+async function loadTourAsync() {
+    console.log('Loading tour with Firebase...');
+    
+    // Check if required modules are loaded
+    if (typeof TourDetailsManager === 'undefined') {
+        console.error('TourDetailsManager not loaded!');
+        return;
+    }
+    
+    const tourManager = new TourDetailsManager();
+    const tourId = tourManager.getTourIdFromURL();
+    
+    if (!tourId) {
+        tourManager.showTourNotFound(tourId);
+        return;
+    }
+    
+    // Try Firebase first
+    if (window.FirebaseTourService && window.FirebaseTourService.initialized) {
+        console.log('Using Firebase service...');
+        const tour = await window.FirebaseTourService.getTour(tourId);
+        
+        if (tour) {
+            tourManager.renderTourDetails(tour);
+            return;
+        }
+    }
+    
+    // Fallback to static data
+    console.log('Falling back to static data...');
+    if (window.tourData && window.tourData[tourId]) {
+        tourManager.renderTourDetails(window.tourData[tourId]);
+    } else {
+        tourManager.showTourNotFound(tourId);
+    }
+}
+
 // Auto-initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, initializing TourDetailsManager...');
-    
-    // Check if all required modules are loaded
-    if (typeof TourDetailsManager !== 'undefined' && typeof window.tourData !== 'undefined') {
-        const tourManager = new TourDetailsManager();
-        tourManager.loadTourDetails();
-    } else {
-        console.error('Required modules not loaded!');
-        console.log('TourDetailsManager available:', typeof TourDetailsManager !== 'undefined');
-        console.log('tourData available:', typeof window.tourData !== 'undefined');
-        
-        // Fallback error message
-        document.getElementById('tour-content').innerHTML = `
-            <div style="text-align: center; padding: 50px; color: #ff6b6b;">
-                <h2>Error Loading Tour</h2>
-                <p>Required JavaScript modules failed to load. Please refresh the page.</p>
-                <a href="index.html" style="color: #0095da;">Return to Home</a>
-            </div>
-        `;
-    }
+    console.log('DOM loaded, initializing tour loading...');
+    loadTourAsync();
 });
