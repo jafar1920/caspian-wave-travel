@@ -108,17 +108,20 @@
 
     <!-- JavaScript -->
     <script src="js/components-loader.js"></script>
+    
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="js/tour-details/firebase-service.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-    <!-- Load modular tour details files IN CORRECT ORDER -->
-    <script src="js/tour-details/image-handler.js"></script>
-    <script src="js/tour-details/tour-data.js"></script>
-    <script src="js/tour-details/itinerary-handler.js"></script>
-    <script src="js/tour-details/tour-renderer.js"></script>
-    <script src="js/tour-details/tour-manager.js"></script>
-    <script src="js/tour-details/init.js"></script>
+<!-- NEW: Organized Firebase Service -->
+<script type="module" src="js/core/firebase/service.js"></script>
+
+<!-- OLD: Keep these for now (we'll remove gradually) -->
+<script src="js/modules/tours/data.js"></script>
+<script src="js/tour-details/image-handler.js"></script>
+<script src="js/tour-details/itinerary-handler.js"></script>
+<script src="js/tour-details/tour-renderer.js"></script>
+<script src="js/tour-details/tour-manager.js"></script>
+<script src="js/tour-details/init.js"></script>
 
     <!-- Simple fallback script -->
     <script>
