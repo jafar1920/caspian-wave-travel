@@ -1,4 +1,4 @@
-// js/tour-details/tour-renderer.js
+// js/modules/tours/renderer.js
 console.log('=== TOUR RENDERER MODULE LOADED ===');
 
 class TourRenderer {

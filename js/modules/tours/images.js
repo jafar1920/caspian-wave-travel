@@ -1,4 +1,4 @@
-// js/tour-details/image-handler.js - ULTIMATE FIXED VERSION
+// js/modules/tours/images.js
 console.log('=== IMAGE HANDLER MODULE LOADED ===');
 
 // Check if already loaded
@@ -12,21 +12,11 @@ class ImageHandler {
     constructor() {
         console.log('✅ ImageHandler constructor called');
         
-        // Store single instance
-        if (window._imageHandlerInstance) {
-            console.log('⚠️ Returning existing instance');
-            return window._imageHandlerInstance;
-        }
-        
         this.currentImageIndex = 0;
         this.totalImages = 0;
         this.images = [];
         this.isZoomed = false;
         this.keydownHandler = null;
-        
-        // Mark as main instance
-        window._imageHandlerInstance = this;
-        window.imageHandler = this;
         
         console.log('✅ ImageHandler instance created');
     }
@@ -41,7 +31,6 @@ class ImageHandler {
             console.log(`📸 Loaded ${this.totalImages} images`);
             
             this.renderGallery(tour.images);
-            this.setupAllEventListeners();
         } else {
             console.error('❌ No images found in tour data');
         }
@@ -53,25 +42,19 @@ class ImageHandler {
         this.images = images;
         this.totalImages = images.length;
         
-        // Set main image
+        // ===== SET MAIN IMAGE WITH CLICK LISTENER =====
         const mainImage = document.getElementById('main-image');
         if (mainImage && images[0]) {
             mainImage.src = images[0];
-            console.log('✅ Set main image');
+            mainImage.style.cursor = 'pointer';
+            console.log('✅ Main image source set');
         }
         
-        // Set side images
-        const sideImage1 = document.getElementById('side-image-1');
-        const sideImage2 = document.getElementById('side-image-2');
+        // ===== SET SIDE IMAGES =====
+        this.setupSideImages(images);
         
-        if (sideImage1 && images[1]) {
-            sideImage1.src = images[1];
-            console.log('✅ Set side image 1');
-        }
-        if (sideImage2 && images[2]) {
-            sideImage2.src = images[2];
-            console.log('✅ Set side image 2');
-        }
+        // ===== SETUP VIEW ALL BUTTON =====
+        this.setupViewAllButton();
         
         // Update image count
         const imageCountElement = document.getElementById('image-count');
@@ -79,72 +62,195 @@ class ImageHandler {
             imageCountElement.textContent = images.length > 3 ? 
                 `+${images.length - 3} more` : 'View All';
         }
+        
+        // Setup all click handlers - Wait a bit for DOM to be ready
+        setTimeout(() => {
+            this.setupClickHandlers();
+        }, 100);
+    }
+
+    setupSideImages(images) {
+        console.log('🔧 Setting up side images...');
+        
+        // Side Image 1
+        const sideImage1 = document.getElementById('side-image-1');
+        if (sideImage1 && images[1]) {
+            sideImage1.src = images[1];
+            sideImage1.style.cursor = 'pointer';
+            console.log('✅ Side image 1 source set');
+        }
+        
+        // Side Image 2
+        const sideImage2 = document.getElementById('side-image-2');
+        if (sideImage2 && images[2]) {
+            sideImage2.src = images[2];
+            sideImage2.style.cursor = 'pointer';
+            console.log('✅ Side image 2 source set');
+        }
+    }
+
+    setupClickHandlers() {
+        console.log('🔗 Setting up all click handlers...');
+        
+        // ===== MAIN IMAGE CLICK =====
+        const mainImage = document.getElementById('main-image');
+        if (mainImage) {
+            // Remove any existing listeners first
+            const newMainImg = mainImage.cloneNode(true);
+            mainImage.parentNode.replaceChild(newMainImg, mainImage);
+            
+            // Get fresh reference
+            const freshMainImg = document.getElementById('main-image');
+            freshMainImg.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🖱️ Main image clicked');
+                this.openGallery(0);
+            });
+            console.log('✅ Main image click handler added');
+        }
+        
+        // ===== SIDE IMAGE 1 AND ITS OVERLAY =====
+        const sideImage1Container = document.querySelector('.side-images .side-image:nth-child(1)');
+        const sideImage1 = document.getElementById('side-image-1');
+        
+        if (sideImage1Container && sideImage1) {
+            // Clone to remove old listeners
+            const newContainer1 = sideImage1Container.cloneNode(true);
+            sideImage1Container.parentNode.replaceChild(newContainer1, sideImage1Container);
+            
+            // Get fresh references
+            const freshContainer1 = document.querySelector('.side-images .side-image:nth-child(1)');
+            const freshSideImage1 = freshContainer1.querySelector('img');
+            const freshOverlay1 = freshContainer1.querySelector('.image-overlay');
+            
+            // Add click handler to the ENTIRE container
+            freshContainer1.style.cursor = 'pointer';
+            freshContainer1.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🖱️ Side image 1 container clicked');
+                this.switchMainImage(1);
+            });
+            
+            // Also add to the image itself
+            if (freshSideImage1) {
+                freshSideImage1.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🖱️ Side image 1 clicked');
+                    this.switchMainImage(1);
+                });
+            }
+            
+            // And to the overlay
+            if (freshOverlay1) {
+                freshOverlay1.style.cursor = 'pointer';
+                freshOverlay1.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🖱️ Side image 1 OVERLAY clicked');
+                    this.switchMainImage(1);
+                });
+            }
+            
+            console.log('✅ Side image 1, container and overlay handlers added');
+        }
+        
+        // ===== SIDE IMAGE 2 AND ITS OVERLAY =====
+        const sideImage2Container = document.querySelector('.side-images .side-image:nth-child(2)');
+        const sideImage2 = document.getElementById('side-image-2');
+        
+        if (sideImage2Container && sideImage2) {
+            // Clone to remove old listeners
+            const newContainer2 = sideImage2Container.cloneNode(true);
+            sideImage2Container.parentNode.replaceChild(newContainer2, sideImage2Container);
+            
+            // Get fresh references
+            const freshContainer2 = document.querySelector('.side-images .side-image:nth-child(2)');
+            const freshSideImage2 = freshContainer2.querySelector('img');
+            const freshOverlay2 = freshContainer2.querySelector('.image-overlay');
+            
+            // Add click handler to the ENTIRE container
+            freshContainer2.style.cursor = 'pointer';
+            freshContainer2.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🖱️ Side image 2 container clicked');
+                this.switchMainImage(2);
+            });
+            
+            // Also add to the image itself
+            if (freshSideImage2) {
+                freshSideImage2.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🖱️ Side image 2 clicked');
+                    this.switchMainImage(2);
+                });
+            }
+            
+            // And to the overlay
+            if (freshOverlay2) {
+                freshOverlay2.style.cursor = 'pointer';
+                freshOverlay2.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🖱️ Side image 2 OVERLAY clicked');
+                    this.switchMainImage(2);
+                });
+            }
+            
+            console.log('✅ Side image 2, container and overlay handlers added');
+        }
+        
+        console.log('✅ All click handlers setup complete');
     }
 
     setupAllEventListeners() {
         console.log('🔧 Setting up ALL event listeners...');
-        
-        // Setup side images
-        this.setupSideImageListeners();
-        
-        // Setup View All button
         this.setupViewAllButton();
-        
-        console.log('✅ All event listeners setup complete');
-    }
-
-    setupSideImageListeners() {
-        console.log('🔧 Setting up side image listeners...');
-        
-        // Use event delegation for reliability
-        document.addEventListener('click', (e) => {
-            // Check if clicked on side image or its children
-            const sideImage = e.target.closest('.side-image');
-            if (!sideImage) return;
-            
-            // Find which side image was clicked
-            const sideImages = document.querySelectorAll('.side-image');
-            const index = Array.from(sideImages).indexOf(sideImage) + 1;
-            
-            console.log('🖱️ Side image clicked:', index);
-            this.switchMainImage(index);
-        });
     }
 
     setupViewAllButton() {
         console.log('🔧 Setting up View All button...');
         
-        const viewAllIcon = document.querySelector('.image-icon');
-        if (!viewAllIcon) {
-            console.error('❌ View All icon not found');
-            return;
+        const viewAllButton = document.getElementById('view-all-button');
+        if (viewAllButton) {
+            // Clone to remove old listeners
+            const newButton = viewAllButton.cloneNode(true);
+            viewAllButton.parentNode.replaceChild(newButton, viewAllButton);
+            
+            // Get fresh reference
+            const freshButton = document.getElementById('view-all-button');
+            freshButton.style.cursor = 'pointer';
+            
+            freshButton.addEventListener('click', (e) => {
+                console.log('🎯 View All clicked');
+                e.preventDefault();
+                e.stopPropagation();
+                
+                if (this.totalImages > 0) {
+                    console.log('   Opening gallery...');
+                    this.openGallery(0);
+                } else {
+                    console.error('❌ No images to show!');
+                    alert('No images available');
+                }
+            });
         }
         
-        // Remove ALL existing event listeners by replacing the element
-        const newIcon = viewAllIcon.cloneNode(true);
-        viewAllIcon.parentNode.replaceChild(newIcon, viewAllIcon);
-        
-        // Get fresh reference
-        const freshIcon = document.querySelector('.image-icon');
-        
-        // Add SUPER SIMPLE click handler
-        freshIcon.addEventListener('click', (e) => {
-            console.log('🎯 View All button CLICKED - DIRECT HANDLER');
-            e.preventDefault();
-            e.stopPropagation();
-            
-            // Check if we have images
-            console.log('   Total images:', this.totalImages);
-            console.log('   Images array:', this.images);
-            
-            if (this.totalImages > 0) {
-                console.log('   Opening gallery...');
+        // Also make image count text clickable
+        const imageCountElement = document.getElementById('image-count');
+        if (imageCountElement) {
+            imageCountElement.style.cursor = 'pointer';
+            imageCountElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('📝 Image count text clicked');
                 this.openGallery(0);
-            } else {
-                console.error('❌ No images to show!');
-                alert('No images available');
-            }
-        });
+            });
+        }
         
         console.log('✅ View All button setup complete');
     }
@@ -156,19 +262,27 @@ class ImageHandler {
         const sideImage1 = document.getElementById('side-image-1');
         const sideImage2 = document.getElementById('side-image-2');
         
-        if (index === 1 && mainImage && sideImage1 && sideImage1.src) {
-            // Swap images
-            const temp = mainImage.src;
+        if (!mainImage || !sideImage1 || !sideImage2) {
+            console.error('❌ Image elements not found');
+            return;
+        }
+        
+        let tempSrc;
+        
+        if (index === 1 && sideImage1.src) {
+            // Swap main image with side image 1
+            tempSrc = mainImage.src;
             mainImage.src = sideImage1.src;
-            sideImage1.src = temp;
+            sideImage1.src = tempSrc;
             console.log('✅ Switched with side image 1');
-        } else if (index === 2 && mainImage && sideImage2 && sideImage2.src) {
-            const temp = mainImage.src;
+        } else if (index === 2 && sideImage2.src) {
+            // Swap main image with side image 2
+            tempSrc = mainImage.src;
             mainImage.src = sideImage2.src;
-            sideImage2.src = temp;
+            sideImage2.src = tempSrc;
             console.log('✅ Switched with side image 2');
         } else {
-            console.error('❌ Cannot switch images - elements or src missing');
+            console.error('❌ Cannot switch images');
         }
     }
 
@@ -180,6 +294,7 @@ class ImageHandler {
         
         if (this.totalImages === 0) {
             console.error('❌ No images to show in gallery!');
+            alert('No images available to show in gallery');
             return;
         }
         
@@ -227,12 +342,13 @@ class ImageHandler {
                 return;
             }
             
-            // Clone to remove old listeners
+            // Remove existing listeners
             const newBtn = btn.cloneNode(true);
             btn.parentNode.replaceChild(newBtn, btn);
             
             // Add fresh listener
-            document.querySelector(selector).addEventListener('click', (e) => {
+            const freshBtn = document.querySelector(selector);
+            freshBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log(`🖱️ ${label} button clicked`);
@@ -296,12 +412,7 @@ class ImageHandler {
             // Update lightbox image
             const lightboxImage = document.getElementById('lightbox-image');
             if (lightboxImage) {
-                lightboxImage.classList.add('image-changing');
                 lightboxImage.src = imageUrl;
-                
-                setTimeout(() => {
-                    lightboxImage.classList.remove('image-changing');
-                }, 300);
             }
             
             this.updateCounters();
@@ -324,6 +435,7 @@ class ImageHandler {
         this.images.forEach((img, index) => {
             const thumb = document.createElement('div');
             thumb.className = `thumbnail ${index === this.currentImageIndex ? 'active' : ''}`;
+            thumb.style.cursor = 'pointer';
             
             const imgEl = document.createElement('img');
             imgEl.src = img;
@@ -398,26 +510,7 @@ class ImageHandler {
     }
 }
 
-// ===== CREATE AND EXPORT INSTANCE =====
-try {
-    const imageHandler = new ImageHandler();
-    console.log('🎯 ImageHandler instance ready');
-    
-    // Make globally available
-    window.imageHandler = imageHandler;
-    window._imageHandlerInstance = imageHandler;
-    
-    // Global functions for backward compatibility
-    window.openGallery = (index = 0) => {
-        console.log('🔗 Global openGallery called');
-        if (imageHandler && typeof imageHandler.openGallery === 'function') {
-            return imageHandler.openGallery(index);
-        }
-    };
-    
-} catch (error) {
-    console.error('❌ Error creating ImageHandler:', error);
-}
+// MAKE THE CLASS AVAILABLE GLOBALLY
+window.ImageHandler = ImageHandler;
 
-console.log('✅ ImageHandler module loaded successfully');
-
+console.log('✅ ImageHandler class loaded');

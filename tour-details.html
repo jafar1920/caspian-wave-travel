@@ -23,24 +23,24 @@
         <div class="tour-images-container">
             <div class="main-image">
                 <img src="" alt="Main tour image" id="main-image">
-                <div class="image-icon" data-action="open-gallery">
+                <div class="image-icon" id="view-all-button">
                     <i class="fas fa-images"></i>
                     <span class="image-count" id="image-count">View All</span>
                 </div>
             </div>
             <div class="side-images">
-                <div class="side-image" data-action="switch-image">
+                <div class="side-image">
                     <img src="" alt="Tour image 2" id="side-image-1">
                     <div class="image-overlay">
                         <span class="view-more">View</span>
-                        <span class="view-more-subtitle">Click to expand</span>
+                        <span class="view-more-subtitle">Click to switch</span>
                     </div>
                 </div>
-                <div class="side-image" data-action="switch-image">
+                <div class="side-image">
                     <img src="" alt="Tour image 3" id="side-image-2">
                     <div class="image-overlay">
                         <span class="view-more">View</span>
-                        <span class="view-more-subtitle">Click to expand</span>
+                        <span class="view-more-subtitle">Click to switch</span>
                     </div>
                 </div>
             </div>
@@ -106,83 +106,141 @@
         <span class="tooltip-arrow"></span>
     </a>
 
-    <!-- JavaScript -->
+    <!-- JavaScript - CORRECTED VERSION -->
     <script src="js/components-loader.js"></script>
     
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-<!-- NEW: Organized Firebase Service -->
-<script type="module" src="js/core/firebase/service.js"></script>
+    <!-- Firebase Service -->
+    <script type="module" src="js/core/firebase/service.js"></script>
 
-<!-- OLD: Keep these for now (we'll remove gradually) -->
+    <!-- Tour Modules IN CORRECT ORDER -->
 <script src="js/modules/tours/data.js"></script>
-<script src="js/tour-details/image-handler.js"></script>
-<script src="js/tour-details/itinerary-handler.js"></script>
-<script src="js/tour-details/tour-renderer.js"></script>
-<script src="js/tour-details/tour-manager.js"></script>
-<script src="js/tour-details/init.js"></script>
+<script src="js/modules/tours/images.js"></script>
+<script src="js/modules/tours/renderer.js"></script>
+<script src="js/modules/tours/manager.js"></script>
+<script src="js/modules/tours/itinerary.js"></script>
+<script src="js/pages/tour-details.js"></script>
+
+    <!-- Debug Helper Script -->
+    <script>
+        // Debug helper for testing
+        window.debugImageHandler = function() {
+            console.log('🔍 DEBUG ImageHandler Status:');
+            console.log('ImageHandler class:', window.ImageHandler ? '✅ Loaded' : '❌ Not loaded');
+            console.log('ImageHandler instance:', window._imageHandlerInstance || 'No instance');
+            console.log('window.imageHandler:', window.imageHandler || 'Not set');
+            
+            // Check DOM elements
+            console.log('Main image element:', document.getElementById('main-image'));
+            console.log('Side image 1:', document.getElementById('side-image-1'));
+            console.log('Side image 2:', document.getElementById('side-image-2'));
+            console.log('View All button:', document.getElementById('view-all-button'));
+        };
+        
+        // Test clicks manually
+        window.testClicks = function() {
+            console.log('🖱️ Testing click handlers...');
+            
+            const mainImage = document.getElementById('main-image');
+            const side1 = document.getElementById('side-image-1');
+            const side2 = document.getElementById('side-image-2');
+            const viewAll = document.getElementById('view-all-button');
+            
+            if (mainImage && mainImage.onclick) {
+                console.log('✅ Main image has onclick handler');
+            } else {
+                console.log('❌ Main image has NO onclick handler');
+            }
+            
+            // Simulate clicks
+            if (mainImage) {
+                mainImage.click();
+                console.log('Simulated main image click');
+            }
+        };
+    </script>
 
     <!-- Simple fallback script -->
     <script>
-        // Simple fallback to ensure gallery works
         window.addEventListener('load', function() {
             console.log('📱 Tour Details Page Fully Loaded');
             
-            // Check if imageHandler was properly initialized
+            // Wait a bit for all scripts to initialize
             setTimeout(() => {
-                const imageHandler = window.imageHandler || window._imageHandlerInstance;
+                console.log('🔍 Checking initialization status...');
                 
-                if (imageHandler) {
-                    console.log('✅ ImageHandler found:', imageHandler.constructor.name);
+                // Check if manager was created
+                if (window.TourDetailsManager) {
+                    console.log('✅ TourDetailsManager class loaded');
+                }
+                
+                // Check if image handler instance exists
+                const managerInstance = window._tourManagerInstance;
+                if (managerInstance && managerInstance.imageHandler) {
+                    console.log('✅ ImageHandler instance found via manager:', managerInstance.imageHandler);
                     
-                    // If images are already loaded, ensure event listeners are set up
-                    if (imageHandler.images && imageHandler.images.length > 0) {
-                        console.log(`📸 ${imageHandler.images.length} images ready`);
+                    // Test if images are loaded
+                    if (managerInstance.imageHandler.images && managerInstance.imageHandler.images.length > 0) {
+                        console.log(`📸 ${managerInstance.imageHandler.images.length} images loaded`);
                         
-                        // Force re-setup of event listeners as a safety measure
-                        if (typeof imageHandler.setupAllEventListeners === 'function') {
-                            console.log('🔧 Ensuring event listeners are set up');
-                            imageHandler.setupAllEventListeners();
-                        }
+                        // Manual test of click handlers
+                        console.log('🖱️ Manual click test:');
+                        console.log('- Click side images to switch with main image');
+                        console.log('- Click main image or "View All" to open gallery');
+                        console.log('- Click gallery navigation buttons to browse');
                     }
                 } else {
-                    console.warn('⚠️ ImageHandler not found - images may not work properly');
+                    console.warn('⚠️ ImageHandler not accessible via manager');
+                    
+                    // Try direct access
+                    if (window.imageHandler) {
+                        console.log('✅ Found window.imageHandler directly');
+                    } else if (window._imageHandlerInstance) {
+                        console.log('✅ Found window._imageHandlerInstance');
+                    }
                 }
-            }, 1000); // Give modules time to load
+                
+                // Run debug helper
+                if (window.debugImageHandler) {
+                    window.debugImageHandler();
+                }
+            }, 1500);
         });
     </script>
 
     <script>
-// BACKUP FIX FOR NAV LINKS ON TOUR-DETAILS PAGE
-document.addEventListener('DOMContentLoaded', function() {
-    if (!window.location.pathname.includes('tour-details.html')) return;
-    
-    console.log('🔧 Applying backup fix for tour-details navigation...');
-    
-    // Fix links after a delay (in case nav loads later)
-    setTimeout(function() {
-        const navLinks = document.querySelectorAll('nav a[href^="#"]');
-        
-        navLinks.forEach(link => {
-            const href = link.getAttribute('href');
-            if (href && href.startsWith('#') && !href.includes('index.html')) {
-                // Change #something to index.html#something
-                link.setAttribute('href', 'index.html' + href);
+        // BACKUP FIX FOR NAV LINKS ON TOUR-DETAILS PAGE
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!window.location.pathname.includes('tour-details.html')) return;
+            
+            console.log('🔧 Applying backup fix for tour-details navigation...');
+            
+            // Fix links after a delay (in case nav loads later)
+            setTimeout(function() {
+                const navLinks = document.querySelectorAll('nav a[href^="#"]');
                 
-                // Add aggressive click handler as backup
-                link.addEventListener('click', function(e) {
-                    if (window.location.pathname.includes('tour-details.html')) {
-                        e.preventDefault();
-                        window.location.href = 'index.html' + href;
+                navLinks.forEach(link => {
+                    const href = link.getAttribute('href');
+                    if (href && href.startsWith('#') && !href.includes('index.html')) {
+                        // Change #something to index.html#something
+                        link.setAttribute('href', 'index.html' + href);
+                        
+                        // Add aggressive click handler as backup
+                        link.addEventListener('click', function(e) {
+                            if (window.location.pathname.includes('tour-details.html')) {
+                                e.preventDefault();
+                                window.location.href = 'index.html' + href;
+                            }
+                        });
                     }
                 });
-            }
+                
+                console.log(`✅ Fixed ${navLinks.length} navigation links`);
+            }, 1000);
         });
-        
-        console.log(`✅ Fixed ${navLinks.length} navigation links`);
-    }, 1000);
-});
-</script>
+    </script>
 </body>
 </html>
