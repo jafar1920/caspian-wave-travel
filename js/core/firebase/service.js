@@ -99,6 +99,56 @@ fallbackToStatic(tourId) {
     console.error(`💥 Tour not found anywhere: ${tourId}`);
     return null;
 }
+
+// Add to your existing FirebaseTourService class
+
+async getAllTours() {
+    try {
+        if (!this.initialized) await this.initialize();
+        
+        const query = await this.db.collection('tours')
+            .where('type', '==', 'tour')
+            .where('isActive', '==', true)
+            .get();
+        
+        const tours = [];
+        query.forEach(doc => {
+            tours.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+        
+        return tours;
+    } catch (error) {
+        console.error('Error fetching tours:', error);
+        return null;
+    }
+}
+
+async getAllPackages() {
+    try {
+        if (!this.initialized) await this.initialize();
+        
+        const query = await this.db.collection('tours')
+            .where('type', '==', 'package')
+            .where('isActive', '==', true)
+            .get();
+        
+        const packages = [];
+        query.forEach(doc => {
+            packages.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+        
+        return packages;
+    } catch (error) {
+        console.error('Error fetching packages:', error);
+        return null;
+    }
+}
 }
 
 // Create and initialize service

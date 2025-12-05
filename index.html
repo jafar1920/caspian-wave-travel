@@ -52,14 +52,23 @@
         <span class="tooltip-arrow"></span>
     </a>
 
-    <!-- JavaScript -->
-   <script src="js/modules/components/loader-core.js"></script>
+    <!-- JavaScript -->\
+   <!-- JavaScript -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+<!-- FIREBASE SERVICE MUST BE HERE, BEFORE COMPONENTS -->
+<script type="module" src="js/core/firebase/service.js"></script>
+
+<!-- Then load your components -->
+<script src="js/modules/components/loader-core.js"></script>
 <script src="js/modules/components/page-initializer.js"></script>
 <script src="js/modules/components/navbar-manager.js"></script>
 <script src="js/modules/components/navigation-fixer.js"></script>
 <script src="js/components-loader.js"></script>
-    <script src="js/carousel.js"></script>
-     <script src="js/hash-scroll-handler.js"></script>
+<script src="js/carousel.js"></script>
+<script src="js/hash-scroll-handler.js"></script>
+     
 
   
 </body>

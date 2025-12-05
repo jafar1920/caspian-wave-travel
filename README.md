@@ -1,6 +1,7 @@
 
 ```
 caspian-wave-travel
+├─ admin.html
 ├─ components
 │  ├─ about.html
 │  ├─ carousel.html
@@ -12,6 +13,7 @@ caspian-wave-travel
 │  ├─ services.html
 │  └─ whatsapp-button.html
 ├─ css
+│  ├─ admin.css
 │  ├─ animations.css
 │  ├─ base
 │  │  ├─ reset.css
@@ -33,6 +35,14 @@ caspian-wave-travel
 │  └─ tour-details.css
 ├─ index.html
 ├─ js
+│  ├─ admin
+│  │  ├─ auth.js
+│  │  ├─ dashboard.js
+│  │  ├─ firebase.js
+│  │  ├─ tours.js
+│  │  ├─ ui.js
+│  │  └─ utils.js
+│  ├─ admin.js
 │  ├─ carousel.js
 │  ├─ components-loader.js
 │  ├─ core
@@ -41,9 +51,19 @@ caspian-wave-travel
 │  │     └─ service.js
 │  ├─ hash-scroll-handler.js
 │  ├─ modules
+│  │  ├─ components
+│  │  │  ├─ loader-core.js
+│  │  │  ├─ navbar-manager.js
+│  │  │  ├─ navigation-fixer.js
+│  │  │  └─ page-initializer.js
 │  │  └─ tours
 │  │     ├─ data.js
-│  │     ├─ images.js
+│  │     ├─ image-handler
+│  │     │  ├─ core.js
+│  │     │  ├─ dom-manager.js
+│  │     │  ├─ events.js
+│  │     │  ├─ gallery.js
+│  │     │  └─ keyboard.js
 │  │     ├─ itinerary.js
 │  │     ├─ manager.js
 │  │     └─ renderer.js

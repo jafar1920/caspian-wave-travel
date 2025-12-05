@@ -54,10 +54,46 @@ class ComponentLoader {
         }
     }
 
-    insertComponent(componentName, html) {
-        const container = document.getElementById(`${componentName}-container`);
-        if (container) container.innerHTML = html;
+   insertComponent(componentName, html) {
+    const container = document.getElementById(`${componentName}-container`);
+    if (container) {
+        container.innerHTML = html;
+        
+        // NEW: Execute any scripts in the loaded HTML
+        this.executeScripts(container);
     }
+}
+
+// NEW METHOD: Execute scripts in the container
+executeScripts(container) {
+    const scripts = container.getElementsByTagName('script');
+    
+    for (let script of scripts) {
+        try {
+            // Create a new script element
+            const newScript = document.createElement('script');
+            
+            // Copy attributes
+            if (script.src) {
+                newScript.src = script.src;
+            } else {
+                newScript.textContent = script.textContent;
+            }
+            
+            // Copy type
+            if (script.type) {
+                newScript.type = script.type;
+            }
+            
+            // Execute the script
+            document.body.appendChild(newScript);
+            document.body.removeChild(newScript);
+            
+        } catch (error) {
+            console.error(`Error executing script in ${container.id}:`, error);
+        }
+    }
+}
 
     async loadComponents(componentList) {
         const loadPromises = componentList.map(component => 

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Caspian Wave Travel</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-box">
+            <h2><i class="fas fa-lock"></i> Admin Login</h2>
+            <div class="form-group">
+                <input type="text" id="username" placeholder="Username" value="admin">
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" placeholder="Password" value="1234">
+            </div>
+            <button id="loginBtn" class="btn btn-primary">Login</button>
+            <p id="loginError" class="error"></p>
+            <p class="demo-note">Use: admin / 1234</p>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="admin-panel" style="display: none;">
+        <!-- Header -->
+        <header class="header">
+            <h1><i class="fas fa-compass"></i> Tour Admin</h1>
+            <button id="logoutBtn" class="btn btn-logout">Logout</button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="tours">Manage Tours</button>
+                <button class="tab-btn" data-tab="add">Add New Tour</button>
+            </div>
+
+            <!-- Tours List -->
+            <div id="toursTab" class="tab-content active">
+                <div class="section-header">
+                    <h2>All Tours</h2>
+                    <button id="refreshBtn" class="btn btn-refresh"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+                <div id="toursList" class="tours-list">
+                    <!-- Tours will be loaded here -->
+                    <div class="loading">Loading tours...</div>
+                </div>
+            </div>
+
+            <!-- Add Tour Form -->
+            <div id="addTab" class="tab-content">
+                <div class="section-header">
+                    <h2>Add New Tour</h2>
+                </div>
+                <form id="addTourForm" class="tour-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tourTitle">Title *</label>
+                            <input type="text" id="tourTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tourCategory">Category</label>
+                            <input type="text" id="tourCategory" placeholder="e.g., general, adventure">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tourDuration">Duration *</label>
+                            <input type="text" id="tourDuration" required placeholder="e.g., 4-5 Hours">
+                        </div>
+                        <div class="form-group">
+                            <label for="tourGroupSize">Group Size</label>
+                            <input type="text" id="tourGroupSize" placeholder="e.g., 1-12 people">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tourDescription">Description *</label>
+                        <textarea id="tourDescription" rows="4" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tourImages">Image URLs (one per line)</label>
+                        <textarea id="tourImages" rows="3" placeholder="https://example.com/image1.jpg"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tourIncluded">Included (one per line)</label>
+                            <textarea id="tourIncluded" rows="3" placeholder="Professional guide&#10;Transportation"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="tourExcluded">Excluded (one per line)</label>
+                            <textarea id="tourExcluded" rows="3" placeholder="Meals&#10;Personal expenses"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Itinerary (Day,Title,Description)</label>
+                        <div id="itineraryFields">
+                            <div class="itinerary-item">
+                                <input type="number" placeholder="Day" class="itinerary-day" min="1">
+                                <input type="text" placeholder="Title" class="itinerary-title">
+                                <textarea placeholder="Description" class="itinerary-desc" rows="2"></textarea>
+                            </div>
+                        </div>
+                        <button type="button" id="addItineraryBtn" class="btn btn-small">+ Add Day</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Pricing</label>
+                        <div id="pricingFields">
+                            <div class="pricing-item">
+                                <input type="text" placeholder="Description" class="pricing-desc">
+                                <input type="text" placeholder="Persons" class="pricing-persons">
+                                <input type="text" placeholder="Price" class="pricing-price">
+                            </div>
+                        </div>
+                        <button type="button" id="addPricingBtn" class="btn btn-small">+ Add Price</button>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Create Tour</button>
+                        <button type="button" id="clearFormBtn" class="btn btn-secondary">Clear</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Tour</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editTourForm">
+                    <input type="hidden" id="editTourId">
+                    <div class="form-group">
+                        <label for="editTitle">Title *</label>
+                        <input type="text" id="editTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDescription">Description *</label>
+                        <textarea id="editDescription" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDuration">Duration *</label>
+                        <input type="text" id="editDuration" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="button" class="btn btn-secondary close-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load modules -->
+    <script src="js/admin/utils.js"></script>
+    <script src="js/admin/auth.js"></script>
+    <script src="js/admin/firebase.js"></script>
+    <script src="js/admin/dashboard.js"></script>
+    <script src="js/admin/ui.js"></script>
+    <script src="js/admin/tours.js"></script>
+
+    <!-- Initialize -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize auth
+            if (typeof Auth !== 'undefined') {
+                Auth.init();
+            }
+        });
+    </script>
+</body>
+</html>
