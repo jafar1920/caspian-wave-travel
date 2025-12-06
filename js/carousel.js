@@ -49,7 +49,7 @@ function initializeCarousel() {
         // Clear any existing interval first
         stopAutoPlay();
         // Start new interval
-        carouselInterval = setInterval(nextSlide, 5000); // Change every 5 seconds
+        carouselInterval = setInterval(nextSlide, 3000); // Change every 3 seconds
     }
     
     // Stop auto-play on user interaction

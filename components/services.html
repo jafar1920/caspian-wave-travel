@@ -1,84 +1,30 @@
 <section class="section" id="services">
   <h2>Begin Your Adventure</h2>
   <div class="services" id="tours-container">
-    <!-- Tours will load here -->
+    <!-- Tours will load here via ToursLoader -->
   </div>
 </section>
 
 <script>
+// Simple script to initialize ToursLoader
 (function() {
-    console.log('🎯 SERVICES COMPONENT LOADED');
+    console.log('🎯 SERVICES COMPONENT INITIALIZED');
     
-    const container = document.getElementById('tours-container');
-    if (!container) return;
+    // Wait for DOM to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initTours);
+    } else {
+        initTours();
+    }
     
-    // Show loading
-    container.innerHTML = '<div style="text-align:center;padding:40px;">Loading tours...</div>';
-    
-    // Load tours
-    loadTours();
-    
-    async function loadTours() {
-        if (!window.FirebaseTourService || !window.FirebaseTourService.getAllTours) {
-            showError();
+    async function initTours() {
+        if (!window.ToursLoader) {
+            console.error('ToursLoader not available');
             return;
         }
         
-        try {
-            const tours = await window.FirebaseTourService.getAllTours();
-            
-            if (!tours || tours.length === 0) {
-                showEmpty();
-                return;
-            }
-            
-            renderTours(tours);
-            
-        } catch (error) {
-            console.error('Error:', error);
-            showError();
-        }
-    }
-    
-    function renderTours(tours) {
-        let html = '';
-        
-        tours.forEach(tour => {
-            const imageUrl = tour.images && tour.images.length > 0 ? tour.images[0] : '';
-            
-            let displayPrice = 'Price on request';
-            if (tour.pricing && tour.pricing.length > 0) {
-                const lastPrice = tour.pricing[tour.pricing.length - 1];
-                if (lastPrice.price) {
-                    const match = lastPrice.price.match(/\$?(\d+)/);
-                    displayPrice = match ? `$${match[1]}` : lastPrice.price;
-                }
-            }
-            
-            const duration = tour.duration || 'Full Day Tour';
-            
-            html += `
-                <a href="tour-details.html?tour=${tour.id}" class="card-link">
-                    <div class="card" style="background-image: url('${imageUrl}');">
-                        <div class="card-overlay">
-                            <h3>${tour.title}</h3>
-                            <div class="price">${displayPrice}</div>
-                            <div class="duration">${duration}</div>
-                        </div>
-                    </div>
-                </a>
-            `;
-        });
-        
-        container.innerHTML = html;
-    }
-    
-    function showError() {
-        container.innerHTML = '<p style="text-align:center;padding:40px;color:#666;">Error loading tours</p>';
-    }
-    
-    function showEmpty() {
-        container.innerHTML = '<p style="text-align:center;padding:40px;color:#666;">No tours available</p>';
+        // Load tours into the container
+        await window.ToursLoader.load('tours-container');
     }
 })();
 </script>

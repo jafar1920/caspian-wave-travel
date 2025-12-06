@@ -27,7 +27,7 @@ class ItineraryHandler {
                 </div>
                 ${!showAllInitially ? `
                     <button class="show-more-less" data-state="more">
-                        <i class="fas fa-chevron-down"></i> Show More Days (${hiddenDays.length} more)
+                        <i class="fas fa-chevron-down"></i> show more
                     </button>
                 ` : ''}
             </div>
@@ -62,12 +62,12 @@ class ItineraryHandler {
                 if (isShowingMore) {
                     // Show hidden days
                     hiddenDays.style.display = 'block';
-                    this.innerHTML = '<i class="fas fa-chevron-up"></i> Show Less';
+                    this.innerHTML = '<i class="fas fa-chevron-up"></i> show less';
                     this.setAttribute('data-state', 'less');
                 } else {
                     // Hide days
                     hiddenDays.style.display = 'none';
-                    this.innerHTML = '<i class="fas fa-chevron-down"></i> Show More Days';
+                    this.innerHTML = '<i class="fas fa-chevron-down"></i> show more';
                     this.setAttribute('data-state', 'more');
                 }
             });

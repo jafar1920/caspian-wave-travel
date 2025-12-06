@@ -2,101 +2,46 @@
   <h2>Travel Packages</h2>
   <p class="section-subtitle">All-inclusive experiences with hotel options</p>
   
+  <!-- NO ID HERE - Matches hardcoded structure -->
   <div class="services">
-    <!-- Packages load here - NO ID on this div! -->
+    <!-- Packages will load here via PackagesLoader -->
   </div>
 </section>
 
 <script>
-// Wait for DOM to be fully ready
+// Simple script to initialize PackagesLoader
 (function() {
-    console.log('🎯 PACKAGES COMPONENT LOADED');
+    console.log('🎯 PACKAGES COMPONENT INITIALIZED');
     
-    // Find the .services div INSIDE this component
-    const container = document.querySelector('#packages-container .services');
-    if (!container) {
-        console.error('Could not find .services container');
-        return;
+    // Wait for DOM to be ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPackages);
+    } else {
+        initPackages();
     }
     
-    // Show loading
-    container.innerHTML = '<div style="text-align:center;padding:40px;">Loading packages...</div>';
-    
-    // Wait a bit for CSS to load
-    setTimeout(() => {
-        loadPackages();
-    }, 100);
-    
-    async function loadPackages() {
-        console.log('Loading packages...');
-        
-        if (!window.FirebaseTourService || !window.FirebaseTourService.getAllPackages) {
-            console.error('Firebase service not available');
-            showError();
+    async function initPackages() {
+        if (!window.PackagesLoader) {
+            console.error('PackagesLoader not available');
             return;
         }
         
-        try {
-            const packages = await window.FirebaseTourService.getAllPackages();
-            console.log('Got packages:', packages);
-            
-            if (!packages || packages.length === 0) {
-                showEmpty();
-                return;
-            }
-            
-            renderPackages(packages);
-            
-        } catch (error) {
-            console.error('Error:', error);
-            showError();
+        // Find the .services div (no ID selector)
+        const container = document.querySelector('#packages-container .services');
+        if (!container) {
+            console.error('Could not find packages container');
+            return;
         }
-    }
-    
-    function renderPackages(packages) {
-        let html = '';
         
-        packages.forEach(pkg => {
-            const imageUrl = pkg.images && pkg.images.length > 0 ? pkg.images[0] : '';
-            
-            let displayPrice = 'Price on request';
-            if (pkg.pricing && pkg.pricing.length > 0) {
-                const lastPrice = pkg.pricing[pkg.pricing.length - 1];
-                if (lastPrice && lastPrice.price) {
-                    const match = lastPrice.price.match(/\$?(\d+)/);
-                    if (match) {
-                        displayPrice = `From $${match[1]}`;
-                    }
-                }
-            }
-            
-            const duration = pkg.duration || '';
-            
-            // EXACT same HTML as hardcoded
-            html += `
-                <a href="tour-details.html?tour=${pkg.id}" class="card-link">
-                    <div class="card" style="background-image: url('${imageUrl}');">
-                        <div class="card-overlay">
-                            <h3>${pkg.title}</h3>
-                            <div class="price">${displayPrice}</div>
-                            <div class="duration">${duration}</div>
-                            <div class="hotel-options">All-Inclusive Package</div>
-                        </div>
-                    </div>
-                </a>
-            `;
-        });
+        // Give it an ID temporarily for the loader
+        const tempId = 'packages-content-' + Date.now();
+        container.id = tempId;
         
-        container.innerHTML = html;
-        console.log('Packages rendered');
-    }
-    
-    function showError() {
-        container.innerHTML = '<p style="text-align:center;padding:40px;color:#666;">Error loading packages</p>';
-    }
-    
-    function showEmpty() {
-        container.innerHTML = '<p style="text-align:center;padding:40px;color:#666;">No packages available</p>';
+        // Load packages into the container
+        await window.PackagesLoader.load(tempId);
+        
+        // Remove the temporary ID
+        container.removeAttribute('id');
     }
 })();
 </script>

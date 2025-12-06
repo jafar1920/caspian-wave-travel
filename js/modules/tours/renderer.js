@@ -58,7 +58,7 @@ class TourRenderer {
                     </button>
                     <div style="text-align: center; margin-top: 15px; color: #666; font-size: 0.9rem;">
                         <p><i class="fas fa-clock"></i> Duration: ${tour.duration}</p>
-                        <p><i class="fas fa-users"></i> Group Size: ${tour.groupSize}</p>
+                       
                         <p><i class="fas fa-calendar"></i> Available: ${tour.availability}</p>
                     </div>
                 </div>
