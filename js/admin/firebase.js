@@ -1,6 +1,7 @@
 // Firebase Admin
 const FirebaseAdmin = {
     db: null,
+    storage: null,
     
     init() {
         try {
@@ -20,7 +21,8 @@ const FirebaseAdmin = {
             }
             
             this.db = firebase.firestore();
-            console.log('Firebase connected');
+            this.storage = firebase.storage();
+            console.log('Firebase connected with storage');
             
             // Load tours
             if (Dashboard) Dashboard.loadTours();

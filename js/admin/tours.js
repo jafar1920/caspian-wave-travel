@@ -12,20 +12,25 @@ const Tours = {
             return;
         }
         
+        // Validate images
+        if (!window.selectedFiles || !window.selectedFiles.add || window.selectedFiles.add.length === 0) {
+            Utils.showMessage('Please upload at least one image', 'error');
+            return;
+        }
+        
         try {
-            // Prepare tour data for Firebase
-            const tourData = {
+            // First add the tour to get an ID
+            const initialTourData = {
+                type: formData.type,
                 title: formData.title,
                 category: formData.category,
                 duration: formData.duration,
-                groupSize: formData.groupSize || '1-12 people',
                 description: formData.description,
-                images: formData.images,
+                images: [], // Start empty, will be filled after upload
                 included: formData.included,
                 excluded: formData.excluded,
                 itinerary: formData.itinerary,
                 pricing: formData.pricing,
-                type: 'tour',
                 isActive: true,
                 views: 0,
                 createdAt: new Date().toISOString(),
@@ -33,28 +38,64 @@ const Tours = {
                 whatsappMessage: `Hello! I want to book the ${formData.title}`
             };
             
-            console.log('Adding tour:', tourData);
+            // Add package-specific fields
+            if (formData.type === 'package') {
+                initialTourData.availability = formData.availability || 'Daily';
+            }
             
-            // Add to Firebase
-            const tourId = await FirebaseAdmin.addTour(tourData);
+            console.log('Adding item:', initialTourData);
+            
+            // Add to Firebase to get ID
+            const tourId = await FirebaseAdmin.addTour(initialTourData);
+            
+            // Upload images
+            let uploadedImageUrls = [];
+            try {
+                uploadedImageUrls = await UI.uploadSelectedImages('add', tourId);
+                if (uploadedImageUrls.length === 0) {
+                    throw new Error('No images were uploaded successfully');
+                }
+            } catch (uploadError) {
+                console.error('Error uploading images:', uploadError);
+                // Delete the tour if image upload fails
+                await FirebaseAdmin.deleteTour(tourId);
+                Utils.showMessage('Failed to upload images. Please try again.', 'error');
+                return;
+            }
+            
+            // Update the tour with uploaded images
+            initialTourData.images = uploadedImageUrls;
+            await FirebaseAdmin.updateTour(tourId, {
+                images: uploadedImageUrls,
+                updatedAt: new Date().toISOString()
+            });
             
             // Add to local list
             if (Dashboard) {
-                Dashboard.tours.unshift({ id: tourId, ...tourData });
+                Dashboard.tours.unshift({ 
+                    id: tourId, 
+                    ...initialTourData
+                });
                 Dashboard.renderTours();
             }
             
             // Clear form
             UI.clearForm();
             
+            // Clear selected files
+            if (window.selectedFiles && window.selectedFiles.add) {
+                window.selectedFiles.add = [];
+            }
+            
             // Switch to tours tab
             document.querySelector('[data-tab="tours"]').click();
             
-            if (Utils) Utils.showMessage('Tour created successfully!', 'success');
+            const itemType = formData.type === 'tour' ? 'Tour' : 'Package';
+            if (Utils) Utils.showMessage(`${itemType} created successfully!`, 'success');
             
         } catch (error) {
-            console.error('Error adding tour:', error);
-            if (Utils) Utils.showMessage('Failed to create tour: ' + error.message, 'error');
+            console.error('Error adding item:', error);
+            if (Utils) Utils.showMessage('Failed to create item: ' + error.message, 'error');
         }
     },
     
@@ -62,14 +103,9 @@ const Tours = {
         const tourId = document.getElementById('editTourId').value;
         if (!tourId) return;
         
-        const updatedData = {
-            title: document.getElementById('editTitle').value.trim(),
-            description: document.getElementById('editDescription').value.trim(),
-            duration: document.getElementById('editDuration').value.trim(),
-            updatedAt: new Date().toISOString()
-        };
+        const updatedData = UI.getEditFormData();
         
-        // Validate
+        // Validate required fields
         if (!Utils.validateRequired({
             'title': updatedData.title,
             'description': updatedData.description,
@@ -79,6 +115,25 @@ const Tours = {
         }
         
         try {
+            // Get existing tour to preserve existing images
+            const existingTour = Dashboard.getTour(tourId);
+            const existingImages = existingTour?.images || [];
+            
+            // Upload new images if any
+            let newImageUrls = [];
+            if (window.selectedFiles && window.selectedFiles.edit && window.selectedFiles.edit.length > 0) {
+                try {
+                    newImageUrls = await UI.uploadSelectedImages('edit', tourId);
+                } catch (uploadError) {
+                    console.error('Error uploading images:', uploadError);
+                    // Continue with existing images even if new upload fails
+                }
+            }
+            
+            // Combine existing images with newly uploaded images
+            updatedData.images = [...existingImages, ...newImageUrls];
+            
+            // Update tour in Firebase
             await FirebaseAdmin.updateTour(tourId, updatedData);
             
             // Update local list
@@ -86,41 +141,40 @@ const Tours = {
                 Dashboard.updateTourList(tourId, updatedData);
             }
             
+            // Clear selected files for edit form
+            if (window.selectedFiles && window.selectedFiles.edit) {
+                window.selectedFiles.edit = [];
+            }
+            
             // Close modal
             document.getElementById('editModal').style.display = 'none';
             
-            if (Utils) Utils.showMessage('Tour updated successfully!', 'success');
+            const itemType = updatedData.type === 'tour' ? 'Tour' : 'Package';
+            if (Utils) Utils.showMessage(`${itemType} updated successfully!`, 'success');
             
         } catch (error) {
-            console.error('Error updating tour:', error);
-            if (Utils) Utils.showMessage('Failed to update tour: ' + error.message, 'error');
+            console.error('Error updating item:', error);
+            if (Utils) Utils.showMessage('Failed to update item: ' + error.message, 'error');
         }
     },
     
-    async deleteTour(tourId) {
+    async deleteTour(tourId, fromEditModal = false) {
         if (!tourId) return;
         
         const tour = Dashboard.getTour(tourId);
-        const tourName = tour ? tour.title : 'this tour';
+        const tourName = tour ? tour.title : 'this item';
+        const itemType = tour?.type === 'package' ? 'Package' : 'Tour';
         
-        if (!confirm(`Are you sure you want to delete "${tourName}"?`)) {
-            return;
-        }
+        // Store tourId for use in confirmation
+        window.pendingDeleteTourId = tourId;
+        window.pendingDeleteFromEditModal = fromEditModal;
         
-        try {
-            await FirebaseAdmin.deleteTour(tourId);
-            
-            // Remove from local list
-            if (Dashboard) {
-                Dashboard.removeFromList(tourId);
-            }
-            
-            if (Utils) Utils.showMessage('Tour deleted successfully!', 'success');
-            
-        } catch (error) {
-            console.error('Error deleting tour:', error);
-            if (Utils) Utils.showMessage('Failed to delete tour: ' + error.message, 'error');
-        }
+        // Set confirmation message
+        document.getElementById('confirmMessage').textContent = 
+            `Are you sure you want to delete the ${itemType.toLowerCase()} "${tourName}"? This action cannot be undone.`;
+        
+        // Show custom confirmation modal
+        document.getElementById('confirmModal').style.display = 'flex';
     }
 };
 

@@ -57,9 +57,14 @@ input, textarea, select {
     font-size: 1rem;
 }
 
-input:focus, textarea:focus {
+input:focus, textarea:focus, select:focus {
     outline: none;
     border-color: #667eea;
+}
+
+select {
+    background-color: white;
+    cursor: pointer;
 }
 
 .btn {
@@ -174,7 +179,7 @@ input:focus, textarea:focus {
     display: block;
 }
 
-/* Tours List */
+/* Tours/Packages List */
 .section-header {
     display: flex;
     justify-content: space-between;
@@ -217,6 +222,20 @@ input:focus, textarea:focus {
     color: #718096;
     font-size: 0.875rem;
     margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.tour-badge {
+    background: #4299e1;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.tour-badge.package {
+    background: #ed8936;
 }
 
 .tour-description {
@@ -245,6 +264,10 @@ input:focus, textarea:focus {
     color: white;
 }
 
+.btn-delete:hover {
+    background: #c53030;
+}
+
 .loading {
     text-align: center;
     padding: 3rem;
@@ -264,6 +287,13 @@ input:focus, textarea:focus {
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
     margin-bottom: 1rem;
+}
+
+.form-note {
+    font-size: 0.875rem;
+    color: #718096;
+    margin-top: 0.5rem;
+    font-style: italic;
 }
 
 textarea {
@@ -309,7 +339,7 @@ textarea {
     background: white;
     border-radius: 8px;
     width: 90%;
-    max-width: 500px;
+    max-width: 600px;
     max-height: 90vh;
     overflow-y: auto;
 }
@@ -334,6 +364,324 @@ textarea {
     padding: 1.5rem;
 }
 
+/* Field headers for edit modal */
+.field-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    background: #f7fafc;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.field-header button.btn-remove-itinerary,
+.field-header button.btn-remove-pricing {
+    background: #e53e3e;
+    color: white;
+    border: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.field-header button.btn-remove-itinerary:hover,
+.field-header button.btn-remove-pricing:hover {
+    background: #c53030;
+}
+
+/* Improve spacing for dynamic fields */
+.itinerary-item,
+.pricing-item {
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: white;
+}
+
+.itinerary-item:not(:last-child),
+.pricing-item:not(:last-child) {
+    margin-bottom: 15px;
+}
+
+/* Tour Stats */
+.tour-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.tour-stats .stat {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #718096;
+    background: #f7fafc;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+}
+
+.tour-stats .stat.inactive {
+    color: #e53e3e;
+    background: #fed7d7;
+}
+
+/* Button icons */
+.btn-small i {
+    margin-right: 0.25rem;
+}
+
+/* Danger button */
+.btn-danger {
+    background: #e53e3e;
+    color: white;
+    border: none;
+}
+
+.btn-danger:hover {
+    background: #c53030;
+    color: white;
+}
+
+/* Make sure edit modal delete button is red */
+#editDeleteBtn {
+    background: #e53e3e;
+    color: white;
+    border: none;
+}
+
+#editDeleteBtn:hover {
+    background: #c53030;
+    color: white;
+}
+
+/* Confirmation Modal Styles */
+.confirm-icon {
+    text-align: center;
+    margin: 1rem 0 1.5rem;
+}
+
+.confirm-icon i {
+    font-size: 3rem;
+    color: #e53e3e;
+    background: #fed7d7;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.confirm-message {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    color: #2d3748;
+    line-height: 1.5;
+    padding: 0 1rem;
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.confirm-actions .btn {
+    min-width: 120px;
+    padding: 0.75rem 1.5rem;
+}
+
+/* Image Upload Styles */
+.image-upload-section {
+    margin-bottom: 1.5rem;
+}
+
+.upload-area {
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    background: #f7fafc;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.upload-area:hover {
+    border-color: #667eea;
+    background: #edf2f7;
+}
+
+.upload-area.dragover {
+    border-color: #667eea;
+    background: #e6fffa;
+}
+
+.upload-area i {
+    font-size: 2.5rem;
+    color: #667eea;
+    margin-bottom: 0.5rem;
+}
+
+.upload-area p {
+    color: #718096;
+    margin-bottom: 0.5rem;
+}
+
+.upload-area .upload-note {
+    font-size: 0.875rem;
+    color: #a0aec0;
+    margin-bottom: 1rem;
+}
+
+.selected-files {
+    margin-top: 1rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.file-info i {
+    color: #4299e1;
+}
+
+.file-name {
+    font-weight: 500;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.file-size {
+    color: #718096;
+    font-size: 0.875rem;
+}
+
+.btn-remove-file {
+    background: #fed7d7;
+    color: #e53e3e;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    padding: 0;
+}
+
+.btn-remove-file:hover {
+    background: #e53e3e;
+    color: white;
+}
+
+/* Current Images Preview */
+.current-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.current-image {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+.current-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.current-image .btn-remove-image {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(229, 62, 62, 0.9);
+    color: white;
+    border: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.current-image .btn-remove-image:hover {
+    background: #c53030;
+}
+
+/* Upload Progress */
+.upload-progress {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f7fafc;
+    border-radius: 6px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #48bb78;
+    width: 0%;
+    transition: width 0.3s;
+}
+
+.progress-text {
+    font-size: 0.875rem;
+    color: #4a5568;
+    text-align: center;
+    display: block;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .form-row {
@@ -348,5 +696,22 @@ textarea {
     .tour-actions {
         width: 100%;
         justify-content: flex-start;
+    }
+    
+    .tour-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .confirm-actions {
+        flex-direction: column;
+    }
+    
+    .confirm-actions .btn {
+        width: 100%;
+    }
+    
+    .modal-content {
+        width: 95%;
     }
 }
