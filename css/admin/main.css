@@ -1,0 +1,9 @@
+/* main.css - Import all CSS files */
+@import url('base.css');
+@import url('login.css');
+@import url('layout.css');
+@import url('tours.css');
+@import url('forms.css');
+@import url('modal.css');
+@import url('confirmation.css');
+@import url('images.css');

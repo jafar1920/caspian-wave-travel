@@ -1,0 +1,37 @@
+/* Confirmation Modal Styles */
+.confirm-icon {
+    text-align: center;
+    margin: 1rem 0 1.5rem;
+}
+
+.confirm-icon i {
+    font-size: 3rem;
+    color: #e53e3e;
+    background: #fed7d7;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.confirm-message {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    color: #2d3748;
+    line-height: 1.5;
+    padding: 0 1rem;
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.confirm-actions .btn {
+    min-width: 120px;
+    padding: 0.75rem 1.5rem;
+}
