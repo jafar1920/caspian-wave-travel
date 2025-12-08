@@ -1,24 +1,38 @@
 // Tours CRUD Operations
 const Tours = {
     async addTour() {
-        const formData = UI.getFormData();
-        
-        // Validate
-        if (!Utils.validateRequired({
-            'title': formData.title,
-            'duration': formData.duration,
-            'description': formData.description
-        })) {
-            return;
-        }
-        
-        // Validate images
-        if (!window.selectedFiles || !window.selectedFiles.add || window.selectedFiles.add.length === 0) {
-            Utils.showMessage('Please upload at least one image', 'error');
-            return;
-        }
+        const submitBtn = document.querySelector('#addTourForm button[type="submit"]');
+        let originalBtnState = null;
         
         try {
+            // Store original button state
+            if (submitBtn) {
+                originalBtnState = {
+                    innerHTML: submitBtn.innerHTML,
+                    disabled: submitBtn.disabled
+                };
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+                submitBtn.disabled = true;
+            }
+            
+            // Use UIHelpers instead of UI
+            const formData = UIHelpers.getFormData();
+            
+            // Validate
+            if (!Utils.validateRequired({
+                'title': formData.title,
+                'duration': formData.duration,
+                'description': formData.description
+            })) {
+                throw new Error('Please fill in all required fields');
+            }
+            
+            // Validate images
+            if (!window.selectedFiles || !window.selectedFiles.add || window.selectedFiles.add.length === 0) {
+                Utils.showMessage('Please upload at least one image', 'error');
+                throw new Error('No images uploaded');
+            }
+            
             // First add the tour to get an ID
             const initialTourData = {
                 type: formData.type,
@@ -70,17 +84,12 @@ const Tours = {
                 updatedAt: new Date().toISOString()
             });
             
-            // Add to local list
-            if (Dashboard) {
-                Dashboard.tours.unshift({ 
-                    id: tourId, 
-                    ...initialTourData
-                });
-                Dashboard.renderTours();
-            }
-            
             // Clear form
-            UI.clearForm();
+            if (UICore && UICore.clearForm) {
+                UICore.clearForm();
+            } else if (UIForms && UIForms.clearForm) {
+                UIForms.clearForm();
+            }
             
             // Clear selected files
             if (window.selectedFiles && window.selectedFiles.add) {
@@ -88,14 +97,30 @@ const Tours = {
             }
             
             // Switch to tours tab
-            document.querySelector('[data-tab="tours"]').click();
+            const toursTabBtn = document.querySelector('[data-tab="tours"]');
+            if (toursTabBtn) {
+                toursTabBtn.click();
+            }
             
             const itemType = formData.type === 'tour' ? 'Tour' : 'Package';
             if (Utils) Utils.showMessage(`${itemType} created successfully!`, 'success');
             
+            // AUTO-REFRESH: Refresh the tours list after 1 second
+            setTimeout(() => {
+                if (Dashboard && Dashboard.refreshData) {
+                    Dashboard.refreshData();
+                }
+            }, 1000);
+            
         } catch (error) {
             console.error('Error adding item:', error);
             if (Utils) Utils.showMessage('Failed to create item: ' + error.message, 'error');
+        } finally {
+            // Always restore button state
+            if (submitBtn && originalBtnState) {
+                submitBtn.innerHTML = originalBtnState.innerHTML;
+                submitBtn.disabled = originalBtnState.disabled;
+            }
         }
     },
     
@@ -160,21 +185,35 @@ const Tours = {
     },
     
     async updateTour() {
-        const tourId = document.getElementById('editTourId').value;
-        if (!tourId) return;
-        
-        const updatedData = UI.getEditFormData();
-        
-        // Validate required fields
-        if (!Utils.validateRequired({
-            'title': updatedData.title,
-            'description': updatedData.description,
-            'duration': updatedData.duration
-        })) {
-            return;
-        }
+        const submitBtn = document.querySelector('#editTourForm button[type="submit"]');
+        let originalBtnState = null;
         
         try {
+            // Store original button state
+            if (submitBtn) {
+                originalBtnState = {
+                    innerHTML: submitBtn.innerHTML,
+                    disabled: submitBtn.disabled
+                };
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                submitBtn.disabled = true;
+            }
+            
+            const tourId = document.getElementById('editTourId').value;
+            if (!tourId) return;
+            
+            // Use UIHelpers instead of UI
+            const updatedData = UIHelpers.getEditFormData();
+            
+            // Validate required fields
+            if (!Utils.validateRequired({
+                'title': updatedData.title,
+                'description': updatedData.description,
+                'duration': updatedData.duration
+            })) {
+                throw new Error('Please fill in all required fields');
+            }
+            
             // Get existing tour data
             const existingTour = Dashboard.getTour(tourId);
             if (!existingTour) {
@@ -203,12 +242,7 @@ const Tours = {
             // Step 4: Update tour in Firebase
             await FirebaseAdmin.updateTour(tourId, updatedData);
             
-            // Step 5: Update local list
-            if (Dashboard) {
-                Dashboard.updateTourList(tourId, updatedData);
-            }
-            
-            // Step 6: Clear all temporary data
+            // Step 5: Clear all temporary data
             window.currentEditingTourId = null;
             window.currentTourImages = null;
             window.pendingImageDeletions = [];
@@ -220,9 +254,22 @@ const Tours = {
             const itemType = updatedData.type === 'tour' ? 'Tour' : 'Package';
             if (Utils) Utils.showMessage(`${itemType} updated successfully!`, 'success');
             
+            // AUTO-REFRESH: Refresh the tours list after 1 second
+            setTimeout(() => {
+                if (Dashboard && Dashboard.refreshData) {
+                    Dashboard.refreshData();
+                }
+            }, 1000);
+            
         } catch (error) {
             console.error('Error updating item:', error);
             if (Utils) Utils.showMessage('Failed to update item: ' + error.message, 'error');
+        } finally {
+            // Always restore button state
+            if (submitBtn && originalBtnState) {
+                submitBtn.innerHTML = originalBtnState.innerHTML;
+                submitBtn.disabled = originalBtnState.disabled;
+            }
         }
     },
     
@@ -303,8 +350,11 @@ const Tours = {
         window.pendingDeleteFromEditModal = fromEditModal;
         
         // Set confirmation message
-        document.getElementById('confirmMessage').textContent = 
-            `Are you sure you want to delete the ${itemType.toLowerCase()} "${tourName}"? This action cannot be undone.`;
+        const confirmMessage = document.getElementById('confirmMessage');
+        if (confirmMessage) {
+            confirmMessage.textContent = 
+                `Are you sure you want to delete the ${itemType.toLowerCase()} "${tourName}"? This action cannot be undone.`;
+        }
         
         // Show custom confirmation modal
         document.getElementById('confirmModal').style.display = 'flex';

@@ -47,14 +47,18 @@ const Auth = {
         }
     },
     
-    showAdminPanel() {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('adminPanel').style.display = 'block';
-        
-        // Initialize other modules
-        if (FirebaseAdmin) FirebaseAdmin.init();
-        if (UI) UI.init();
-    }
+  showAdminPanel() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    
+    // Initialize other modules
+    if (FirebaseAdmin) FirebaseAdmin.init();
+    if (UICore) UICore.init(); // Changed from UI.init()
+    if (Dashboard) Dashboard.init();
+    
+    // Clear any existing message
+    if (Utils) Utils.showMessage('Login successful!', 'success');
+}
 };
 
 window.Auth = Auth;

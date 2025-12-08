@@ -316,23 +316,65 @@
         </div>
     </div>
 
-    <!-- Load modules -->
-    <script src="js/admin/utils.js"></script>
-    <script src="js/admin/auth.js"></script>
-    <script src="js/admin/firebase.js"></script>
-    <script src="js/admin/image-upload.js"></script>
-    <script src="js/admin/dashboard.js"></script>
-    <script src="js/admin/ui.js"></script>
-    <script src="js/admin/tours.js"></script>
+  
+   <!-- Load modules -->
+<script src="js/admin/utils.js"></script>
+<script src="js/admin/auth.js"></script>
+<script src="js/admin/firebase.js"></script>
+<script src="js/admin/image-upload.js"></script>
+<script src="js/admin/dashboard.js"></script>
+<script src="js/admin/tours.js"></script>
 
-    <!-- Initialize -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize auth
-            if (typeof Auth !== 'undefined') {
-                Auth.init();
-            }
-        });
-    </script>
+<!-- Load UI modules -->
+<script src="js/admin/ui/ui-core.js"></script>
+<script src="js/admin/ui/ui-tabs.js"></script>
+<script src="js/admin/ui/ui-forms.js"></script>
+<script src="js/admin/ui/ui-modals.js"></script>
+<script src="js/admin/ui/ui-images.js"></script>
+<script src="js/admin/ui/ui-tour-editor.js"></script>
+<script src="js/admin/ui/ui-helpers.js"></script>
+
+<!-- Initialize -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Admin panel loading...');
+        
+        // Initialize Auth
+        if (typeof Auth !== 'undefined') {
+            Auth.init();
+            console.log('✅ Auth initialized');
+        }
+    });
+</script>
+
+
+<!-- Just for debug -->
+
+<script>
+    // Debug: Check all modules are loaded
+    setTimeout(() => {
+        console.log('=== MODULE CHECK ===');
+        console.log('Auth:', typeof Auth !== 'undefined');
+        console.log('FirebaseAdmin:', typeof FirebaseAdmin !== 'undefined');
+        console.log('Dashboard:', typeof Dashboard !== 'undefined');
+        console.log('Tours:', typeof Tours !== 'undefined');
+        console.log('UICore:', typeof UICore !== 'undefined');
+        console.log('UITabs:', typeof UITabs !== 'undefined');
+        console.log('UIForms:', typeof UIForms !== 'undefined');
+        console.log('UIModals:', typeof UIModals !== 'undefined');
+        console.log('UIImages:', typeof UIImages !== 'undefined');
+        console.log('UITourEditor:', typeof UITourEditor !== 'undefined');
+        console.log('UIHelpers:', typeof UIHelpers !== 'undefined');
+        console.log('Utils:', typeof Utils !== 'undefined');
+        console.log('ImageUpload:', typeof ImageUpload !== 'undefined');
+        console.log('=== END CHECK ===');
+        
+        // Check if refresh button exists
+        console.log('Refresh button element:', document.getElementById('refreshBtn'));
+    }, 1000);
+</script>
+
+
+
 </body>
 </html>
