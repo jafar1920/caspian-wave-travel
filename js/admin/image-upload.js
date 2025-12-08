@@ -74,17 +74,46 @@ const ImageUpload = {
         }
     },
     
-    // Delete an image from storage
+    // Delete an image from storage - UPDATED
     async deleteImage(imageUrl) {
         try {
             // Extract the path from the URL
-            const url = new URL(imageUrl);
-            const path = decodeURIComponent(url.pathname.split('/o/')[1].split('?')[0]);
+            console.log('Deleting image:', imageUrl);
+            
+            // Try to extract path from Firebase Storage URL
+            let path = '';
+            
+            if (imageUrl.includes('firebasestorage.googleapis.com')) {
+                // Firebase Storage URL format
+                const urlParts = imageUrl.split('/o/');
+                if (urlParts.length > 1) {
+                    path = decodeURIComponent(urlParts[1].split('?')[0]);
+                }
+            } else {
+                // Try to extract from query string or path
+                const url = new URL(imageUrl);
+                const pathname = url.pathname;
+                
+                // Remove leading slash and any query parameters
+                path = pathname.replace(/^\//, '').split('?')[0];
+            }
+            
+            if (!path) {
+                console.error('Could not extract path from URL:', imageUrl);
+                return false;
+            }
+            
+            console.log('Extracted path:', path);
+            
+            // Create storage reference and delete
             const imageRef = this.storage.ref(path);
             await imageRef.delete();
+            console.log('Image deleted successfully from storage');
             return true;
+            
         } catch (error) {
-            console.error('Error deleting image:', error);
+            console.error('Error deleting image from storage:', error);
+            console.error('Image URL was:', imageUrl);
             return false;
         }
     }

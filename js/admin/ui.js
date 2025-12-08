@@ -66,16 +66,28 @@ const UI = {
             clearBtn.addEventListener('click', () => this.clearForm());
         }
         
-        // Add itinerary button
+        // Add itinerary button - FIXED: Remove any duplicate event listeners
         const addItineraryBtn = document.getElementById('addItineraryBtn');
         if (addItineraryBtn) {
-            addItineraryBtn.addEventListener('click', () => this.addItineraryField());
+            // Remove any existing listeners to prevent duplicates
+            addItineraryBtn.replaceWith(addItineraryBtn.cloneNode(true));
+            // Re-get the button after clone
+            document.getElementById('addItineraryBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                this.addItineraryField();
+            });
         }
         
-        // Add pricing button
+        // Add pricing button - FIXED: Remove any duplicate event listeners
         const addPricingBtn = document.getElementById('addPricingBtn');
         if (addPricingBtn) {
-            addPricingBtn.addEventListener('click', () => this.addPricingField());
+            // Remove any existing listeners to prevent duplicates
+            addPricingBtn.replaceWith(addPricingBtn.cloneNode(true));
+            // Re-get the button after clone
+            document.getElementById('addPricingBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                this.addPricingField();
+            });
         }
     },
     
@@ -118,6 +130,8 @@ const UI = {
         closeBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 modal.style.display = 'none';
+                // Clear all temporary data when modal closes without saving
+                this.clearEditModalTempData();
             });
         });
         
@@ -125,6 +139,8 @@ const UI = {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.style.display = 'none';
+                // Clear all temporary data when modal closes without saving
+                this.clearEditModalTempData();
             }
         });
         
@@ -135,6 +151,26 @@ const UI = {
                 e.preventDefault();
                 if (Tours) Tours.updateTour();
             });
+        }
+    },
+    
+    clearEditModalTempData() {
+        // Clear all temporary data for edit modal
+        window.currentEditingTourId = null;
+        window.currentTourImages = null;
+        window.pendingImageDeletions = [];
+        window.newImagesToUpload = [];
+        
+        // Clear selected files
+        if (window.selectedFiles && window.selectedFiles.edit) {
+            window.selectedFiles.edit = [];
+            document.getElementById('editSelectedFiles').innerHTML = '';
+        }
+        
+        // Clear the current images container to trigger garbage collection of object URLs
+        const currentImagesContainer = document.getElementById('currentImages');
+        if (currentImagesContainer) {
+            currentImagesContainer.innerHTML = '';
         }
     },
     
@@ -182,6 +218,7 @@ const UI = {
                 confirmModal.style.display = 'none';
                 if (fromEditModal) {
                     document.getElementById('editModal').style.display = 'none';
+                    this.clearEditModalTempData();
                 }
                 
                 // Clear pending delete
@@ -236,7 +273,7 @@ const UI = {
         
         // File input change
         fileInput.addEventListener('change', (e) => {
-            this.handleFilesSelected(e.target.files, selectedFilesDiv, 'add');
+            this.handleAddFormFilesSelected(e.target.files);
         });
         
         // Drag and drop
@@ -252,7 +289,7 @@ const UI = {
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadArea.classList.remove('dragover');
-            this.handleFilesSelected(e.dataTransfer.files, selectedFilesDiv, 'add');
+            this.handleAddFormFilesSelected(e.dataTransfer.files);
         });
     },
     
@@ -260,7 +297,6 @@ const UI = {
         const uploadArea = document.getElementById('editUploadArea');
         const browseBtn = document.getElementById('editBrowseBtn');
         const fileInput = document.getElementById('editImageUpload');
-        const selectedFilesDiv = document.getElementById('editSelectedFiles');
         
         if (!uploadArea || !browseBtn || !fileInput) return;
         
@@ -271,7 +307,7 @@ const UI = {
         
         // File input change
         fileInput.addEventListener('change', (e) => {
-            this.handleFilesSelected(e.target.files, selectedFilesDiv, 'edit');
+            this.handleEditFormFilesSelected(e.target.files);
         });
         
         // Drag and drop
@@ -287,14 +323,12 @@ const UI = {
         uploadArea.addEventListener('drop', (e) => {
             e.preventDefault();
             uploadArea.classList.remove('dragover');
-            this.handleFilesSelected(e.dataTransfer.files, selectedFilesDiv, 'edit');
+            this.handleEditFormFilesSelected(e.dataTransfer.files);
         });
     },
     
-    handleFilesSelected(files, container, formType) {
+    handleAddFormFilesSelected(files) {
         if (!files || files.length === 0) return;
-        
-        container.innerHTML = '';
         
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
@@ -311,140 +345,101 @@ const UI = {
                 continue;
             }
             
-            // Create file preview
-            const fileItem = document.createElement('div');
-            fileItem.className = 'file-item';
-            fileItem.innerHTML = `
-                <div class="file-info">
-                    <i class="fas fa-image"></i>
-                    <span class="file-name">${file.name}</span>
-                    <span class="file-size">(${(file.size / 1024).toFixed(1)} KB)</span>
-                </div>
-                <button type="button" class="btn-remove-file" data-index="${i}">&times;</button>
-            `;
-            
-            container.appendChild(fileItem);
-            
             // Store file reference
             if (!window.selectedFiles) window.selectedFiles = {};
-            if (!window.selectedFiles[formType]) window.selectedFiles[formType] = [];
-            window.selectedFiles[formType].push(file);
+            if (!window.selectedFiles.add) window.selectedFiles.add = [];
+            window.selectedFiles.add.push(file);
         }
         
-        // Setup remove buttons
-        container.querySelectorAll('.btn-remove-file').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const index = parseInt(e.target.getAttribute('data-index'));
-                window.selectedFiles[formType].splice(index, 1);
-                this.updateFileList(formType);
-            });
-        });
+        // Update preview
+        this.updateAddFormImagePreview();
     },
     
-    updateFileList(formType) {
-        const container = formType === 'add' 
-            ? document.getElementById('selectedFiles')
-            : document.getElementById('editSelectedFiles');
+    handleEditFormFilesSelected(files) {
+        if (!files || files.length === 0) return;
         
-        if (!container || !window.selectedFiles || !window.selectedFiles[formType]) return;
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            
+            // Validate file type
+            if (!file.type.match('image.*')) {
+                Utils.showMessage(`File ${file.name} is not an image`, 'error');
+                continue;
+            }
+            
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                Utils.showMessage(`File ${file.name} is too large (max 5MB)`, 'error');
+                continue;
+            }
+            
+            // Store file reference for later upload
+            if (!window.newImagesToUpload) window.newImagesToUpload = [];
+            window.newImagesToUpload.push(file);
+        }
         
-        const files = window.selectedFiles[formType];
+        // Immediately update preview with the new images
+        this.updateEditModalImagePreview();
+    },
+    
+    updateAddFormImagePreview() {
+        const container = document.getElementById('addImagesPreview');
+        if (!container || !window.selectedFiles || !window.selectedFiles.add) return;
+        
+        const files = window.selectedFiles.add;
+        
+        if (files.length === 0) {
+            container.innerHTML = '<div class="no-images-message">No images selected yet. Upload images to see preview.</div>';
+            return;
+        }
+        
         container.innerHTML = '';
         
         files.forEach((file, index) => {
-            const fileItem = document.createElement('div');
-            fileItem.className = 'file-item';
-            fileItem.innerHTML = `
-                <div class="file-info">
-                    <i class="fas fa-image"></i>
-                    <span class="file-name">${file.name}</span>
-                    <span class="file-size">(${(file.size / 1024).toFixed(1)} KB)</span>
-                </div>
-                <button type="button" class="btn-remove-file" data-index="${index}">&times;</button>
+            // Create object URL for preview
+            const objectUrl = URL.createObjectURL(file);
+            
+            const imageDiv = document.createElement('div');
+            imageDiv.className = 'add-image-preview';
+            imageDiv.innerHTML = `
+                <img src="${objectUrl}" alt="Image ${index + 1}">
+                <span class="image-counter">${index + 1}</span>
+                <button type="button" class="btn-remove-new-image" data-index="${index}" title="Remove image">
+                    &times;
+                </button>
             `;
-            container.appendChild(fileItem);
-        });
-        
-        // Re-setup remove buttons
-        container.querySelectorAll('.btn-remove-file').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const index = parseInt(e.target.getAttribute('data-index'));
-                window.selectedFiles[formType].splice(index, 1);
-                this.updateFileList(formType);
+            container.appendChild(imageDiv);
+            
+            // Setup remove button
+            const removeBtn = imageDiv.querySelector('.btn-remove-new-image');
+            removeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const indexToRemove = parseInt(e.target.getAttribute('data-index'));
+                this.removeAddFormImage(indexToRemove);
             });
         });
     },
     
-    async uploadSelectedImages(formType, tourId) {
-        if (!window.selectedFiles || !window.selectedFiles[formType] || 
-            window.selectedFiles[formType].length === 0) {
-            return [];
-        }
-        
-        const files = window.selectedFiles[formType];
-        const progressBar = formType === 'add' 
-            ? document.getElementById('uploadProgress')
-            : document.getElementById('editUploadProgress');
-        
-        try {
-            // Show progress
-            if (progressBar) {
-                progressBar.style.display = 'block';
-                const progressFill = progressBar.querySelector('.progress-fill');
-                const progressText = progressBar.querySelector('.progress-text');
-                
-                // Update progress
-                progressFill.style.width = '0%';
-                progressText.textContent = `Uploading 0/${files.length} images...`;
-            }
-            
-            // Upload images
-            const uploadedUrls = [];
-            
-            for (let i = 0; i < files.length; i++) {
-                try {
-                    const url = await ImageUpload.uploadImage(files[i], tourId);
-                    uploadedUrls.push(url);
-                    
-                    // Update progress
-                    if (progressBar) {
-                        const progressFill = progressBar.querySelector('.progress-fill');
-                        const progressText = progressBar.querySelector('.progress-text');
-                        const percent = ((i + 1) / files.length) * 100;
-                        progressFill.style.width = `${percent}%`;
-                        progressText.textContent = `Uploading ${i + 1}/${files.length} images...`;
-                    }
-                } catch (error) {
-                    console.error(`Error uploading image ${files[i].name}:`, error);
-                    Utils.showMessage(`Failed to upload ${files[i].name}`, 'error');
-                }
-            }
-            
-            // Clear selected files
-            window.selectedFiles[formType] = [];
-            this.updateFileList(formType);
-            
-            // Hide progress
-            if (progressBar) {
-                setTimeout(() => {
-                    progressBar.style.display = 'none';
-                }, 1000);
-            }
-            
-            return uploadedUrls;
-            
-        } catch (error) {
-            console.error('Error uploading images:', error);
-            if (progressBar) {
-                progressBar.style.display = 'none';
-            }
-            throw error;
+    removeAddFormImage(index) {
+        if (window.selectedFiles && window.selectedFiles.add && window.selectedFiles.add[index]) {
+            // Remove from array
+            window.selectedFiles.add.splice(index, 1);
+            // Update preview
+            this.updateAddFormImagePreview();
         }
     },
     
     editTour(tourId) {
         const tour = Dashboard.getTour(tourId);
         if (!tour) return;
+        
+        // Store current tour ID globally
+        window.currentEditingTourId = tourId;
+        
+        // Reset temporary data
+        window.currentTourImages = [...(tour.images || [])];
+        window.pendingImageDeletions = [];
+        window.newImagesToUpload = [];
         
         // Set basic fields
         document.getElementById('editTourId').value = tourId;
@@ -465,7 +460,7 @@ const UI = {
         this.togglePackageFields('edit', tour.type || 'tour');
         
         // Show current images
-        this.showCurrentImages(tour.images || []);
+        this.updateEditModalImagePreview();
         
         // Populate itinerary fields
         this.populateEditItinerary(tour.itinerary || []);
@@ -480,40 +475,148 @@ const UI = {
         document.getElementById('editModal').style.display = 'flex';
     },
     
-    showCurrentImages(images) {
+    updateEditModalImagePreview() {
+        // Combine existing images (minus deletions) with previews for new images
+        const existingImages = window.currentTourImages || [];
+        const pendingDeletions = window.pendingImageDeletions || [];
+        const newImages = window.newImagesToUpload || [];
+        
+        // Filter out deleted images
+        const currentImages = existingImages.filter((_, index) => !pendingDeletions.includes(index));
+        
+        // Create object URLs for new images for preview
+        const newImagePreviews = newImages.map(file => URL.createObjectURL(file));
+        
+        // Create combined array for display
+        const displayItems = [];
+        
+        // Add existing images
+        currentImages.forEach((imageUrl, index) => {
+            displayItems.push({
+                url: imageUrl,
+                type: 'existing',
+                index: index
+            });
+        });
+        
+        // Add new image previews
+        newImagePreviews.forEach((previewUrl, index) => {
+            displayItems.push({
+                url: previewUrl,
+                type: 'new',
+                index: index,
+                file: newImages[index] // Store reference to the original file
+            });
+        });
+        
+        // Show the combined preview
+        this.showCurrentImages(displayItems);
+    },
+    
+    showCurrentImages(displayItems) {
         const container = document.getElementById('currentImages');
         if (!container) return;
         
         container.innerHTML = '';
         
-        if (!images || images.length === 0) {
-            container.innerHTML = '<p class="form-note">No images uploaded yet.</p>';
+        if (!displayItems || displayItems.length === 0) {
+            container.innerHTML = '<p class="form-note" style="text-align: center; padding: 2rem;">No images uploaded yet.</p>';
             return;
         }
         
-        images.forEach((imageUrl, index) => {
+        displayItems.forEach((item, index) => {
             const imageDiv = document.createElement('div');
             imageDiv.className = 'current-image';
-            imageDiv.innerHTML = `
-                <img src="${imageUrl}" alt="Tour image ${index + 1}" onerror="this.src='https://via.placeholder.com/80?text=Image+Error'">
-                <button type="button" class="btn-remove-image" data-index="${index}" title="Remove image">&times;</button>
-            `;
+            
+            if (item.type === 'new') {
+                // New image from local computer
+                imageDiv.innerHTML = `
+                    <img src="${item.url}" alt="New Image ${index + 1}" 
+                         loading="lazy" 
+                         onerror="this.onerror=null; this.style.display='none'; this.parentElement.style.background='#f7fafc'; this.parentElement.innerHTML+='<div style=\\'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #718096; font-size: 12px;\\'>Image failed to load</div>'">
+                    <span class="image-counter">New</span>
+                    <button type="button" class="btn-remove-image" data-index="${index}" 
+                            data-type="new" data-new-index="${item.index}" title="Remove image">
+                        &times;
+                    </button>
+                `;
+            } else {
+                // Existing image from database
+                const isMarkedForDeletion = window.pendingImageDeletions && 
+                    window.pendingImageDeletions.includes(item.index);
+                
+                if (isMarkedForDeletion) {
+                    imageDiv.style.opacity = '0.5';
+                    imageDiv.style.filter = 'grayscale(100%)';
+                }
+                
+                imageDiv.innerHTML = `
+                    <img src="${item.url}" alt="Image ${index + 1}" 
+                         loading="lazy"
+                         onerror="this.onerror=null; this.style.display='none'; this.parentElement.style.background='#f7fafc'; this.parentElement.innerHTML+='<div style=\\'position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #718096; font-size: 12px;\\'>Image failed to load</div>'">
+                    <span class="image-counter">${index + 1}</span>
+                    <button type="button" class="btn-remove-image" data-index="${index}" 
+                            data-type="existing" data-original-index="${item.index}" 
+                            title="${isMarkedForDeletion ? 'Restore image' : 'Delete image'}">
+                        ${isMarkedForDeletion ? '↶' : '×'}
+                    </button>
+                `;
+            }
+            
             container.appendChild(imageDiv);
         });
         
-        // Setup remove image buttons
+        // Setup remove/restore image buttons
+        this.setupImageDeletionButtons();
+    },
+    
+    setupImageDeletionButtons() {
+        const container = document.getElementById('currentImages');
+        if (!container) return;
+        
         container.querySelectorAll('.btn-remove-image').forEach(btn => {
             btn.addEventListener('click', (e) => {
+                e.stopPropagation();
                 const index = parseInt(e.target.getAttribute('data-index'));
-                this.removeImageFromList(index);
+                const type = e.target.getAttribute('data-type');
+                
+                if (type === 'new') {
+                    // Remove new image that hasn't been uploaded yet
+                    const newIndex = parseInt(e.target.getAttribute('data-new-index'));
+                    this.removeNewImage(newIndex);
+                } else {
+                    // Toggle deletion for existing image
+                    const originalIndex = parseInt(e.target.getAttribute('data-original-index'));
+                    this.toggleImageDeletion(originalIndex);
+                }
             });
         });
     },
     
-    removeImageFromList(index) {
-        // This would require updating the tour data, but for simplicity,
-        // we'll just show a message for now
-        Utils.showMessage('Image removal requires saving changes. Please save after removing images.', 'info');
+    removeNewImage(newIndex) {
+        if (window.newImagesToUpload && window.newImagesToUpload[newIndex]) {
+            // Remove from new images array
+            window.newImagesToUpload.splice(newIndex, 1);
+            // Update preview
+            this.updateEditModalImagePreview();
+        }
+    },
+    
+    toggleImageDeletion(originalIndex) {
+        if (!window.pendingImageDeletions) window.pendingImageDeletions = [];
+        
+        const isCurrentlyMarked = window.pendingImageDeletions.includes(originalIndex);
+        
+        if (isCurrentlyMarked) {
+            // Restore image
+            window.pendingImageDeletions = window.pendingImageDeletions.filter(i => i !== originalIndex);
+        } else {
+            // Mark for deletion
+            window.pendingImageDeletions.push(originalIndex);
+        }
+        
+        // Update preview to show changes
+        this.updateEditModalImagePreview();
     },
     
     populateEditItinerary(itinerary) {
@@ -526,7 +629,11 @@ const UI = {
             const emptyField = document.createElement('div');
             emptyField.className = 'itinerary-item';
             emptyField.innerHTML = `
-                <input type="number" placeholder="Day" class="itinerary-day" min="1">
+                <div class="field-header">
+                    <span>Itinerary 1</span>
+                    <button type="button" class="btn-remove-itinerary" title="Remove itinerary">&times;</button>
+                </div>
+                <input type="number" placeholder="Order" class="itinerary-day" min="1" value="1">
                 <input type="text" placeholder="Title" class="itinerary-title">
                 <textarea placeholder="Description" class="itinerary-desc" rows="2"></textarea>
             `;
@@ -537,10 +644,10 @@ const UI = {
                 newField.className = 'itinerary-item';
                 newField.innerHTML = `
                     <div class="field-header">
-                        <span>Day ${index + 1}</span>
-                        <button type="button" class="btn-remove-itinerary" title="Remove day">&times;</button>
+                        <span>Itinerary ${index + 1}</span>
+                        <button type="button" class="btn-remove-itinerary" title="Remove itinerary">&times;</button>
                     </div>
-                    <input type="number" placeholder="Day" class="itinerary-day" min="1" value="${item.day || index + 1}">
+                    <input type="number" placeholder="Order" class="itinerary-day" min="1" value="${item.day || index + 1}">
                     <input type="text" placeholder="Title" class="itinerary-title" value="${item.title || ''}">
                     <textarea placeholder="Description" class="itinerary-desc" rows="2">${item.description || ''}</textarea>
                 `;
@@ -559,6 +666,10 @@ const UI = {
             const emptyField = document.createElement('div');
             emptyField.className = 'pricing-item';
             emptyField.innerHTML = `
+                <div class="field-header">
+                    <span>Price Option 1</span>
+                    <button type="button" class="btn-remove-pricing" title="Remove price">&times;</button>
+                </div>
                 <input type="text" placeholder="Description" class="pricing-desc">
                 <input type="text" placeholder="Persons" class="pricing-persons">
                 <input type="text" placeholder="Price" class="pricing-price">
@@ -617,10 +728,10 @@ const UI = {
         newField.className = 'itinerary-item';
         newField.innerHTML = `
             <div class="field-header">
-                <span>Day ${count}</span>
-                <button type="button" class="btn-remove-itinerary" title="Remove day">&times;</button>
+                <span>Itinerary ${count}</span>
+                <button type="button" class="btn-remove-itinerary" title="Remove itinerary">&times;</button>
             </div>
-            <input type="number" placeholder="Day" class="itinerary-day" min="1" value="${count}">
+            <input type="number" placeholder="Order" class="itinerary-day" min="1" value="${count}">
             <input type="text" placeholder="Title" class="itinerary-title">
             <textarea placeholder="Description" class="itinerary-desc" rows="2"></textarea>
         `;
@@ -650,25 +761,25 @@ const UI = {
     },
     
     setupRemoveButtons() {
-        // Remove itinerary buttons
+        // Remove itinerary buttons (for edit modal only)
         document.querySelectorAll('.btn-remove-itinerary').forEach(btn => {
             btn.onclick = function() {
                 const parent = this.closest('.itinerary-item').parentElement;
                 if (parent.querySelectorAll('.itinerary-item').length > 1) {
                     this.closest('.itinerary-item').remove();
-                    // Update day numbers
+                    // Update itinerary numbers
                     const container = document.getElementById('editItineraryFields');
                     if (container) {
                         container.querySelectorAll('.itinerary-item').forEach((item, index) => {
                             const header = item.querySelector('.field-header span');
-                            if (header) header.textContent = `Day ${index + 1}`;
+                            if (header) header.textContent = `Itinerary ${index + 1}`;
                         });
                     }
                 }
             };
         });
         
-        // Remove pricing buttons
+        // Remove pricing buttons (for edit modal only)
         document.querySelectorAll('.btn-remove-pricing').forEach(btn => {
             btn.onclick = function() {
                 const parent = this.closest('.pricing-item').parentElement;
@@ -687,35 +798,42 @@ const UI = {
         document.getElementById('tourType').value = 'tour';
         this.togglePackageFields('add', 'tour');
         
-        // Clear dynamic fields
+        // Clear dynamic fields - FIXED: Use innerHTML to completely clear and reset
         const itineraryFields = document.getElementById('itineraryFields');
         const pricingFields = document.getElementById('pricingFields');
         
         if (itineraryFields) {
-            itineraryFields.innerHTML = `
-                <div class="itinerary-item">
-                    <input type="number" placeholder="Day" class="itinerary-day" min="1">
-                    <input type="text" placeholder="Title" class="itinerary-title">
-                    <textarea placeholder="Description" class="itinerary-desc" rows="2"></textarea>
-                </div>
+            // COMPLETELY clear and reset itinerary fields
+            itineraryFields.innerHTML = '';
+            const initialField = document.createElement('div');
+            initialField.className = 'itinerary-item';
+            initialField.innerHTML = `
+                <input type="number" placeholder="Order" class="itinerary-day" min="1" value="1">
+                <input type="text" placeholder="Title" class="itinerary-title">
+                <textarea placeholder="Description" class="itinerary-desc" rows="2"></textarea>
             `;
+            itineraryFields.appendChild(initialField);
         }
         
         if (pricingFields) {
-            pricingFields.innerHTML = `
-                <div class="pricing-item">
-                    <input type="text" placeholder="Description" class="pricing-desc">
-                    <input type="text" placeholder="Persons" class="pricing-persons">
-                    <input type="text" placeholder="Price" class="pricing-price">
-                </div>
+            // COMPLETELY clear and reset pricing fields
+            pricingFields.innerHTML = '';
+            const initialField = document.createElement('div');
+            initialField.className = 'pricing-item';
+            initialField.innerHTML = `
+                <input type="text" placeholder="Description" class="pricing-desc">
+                <input type="text" placeholder="Persons" class="pricing-persons">
+                <input type="text" placeholder="Price" class="pricing-price">
             `;
+            pricingFields.appendChild(initialField);
         }
         
-        // Clear selected files
+        // Clear selected files and preview
         if (window.selectedFiles && window.selectedFiles.add) {
             window.selectedFiles.add = [];
-            document.getElementById('selectedFiles').innerHTML = '';
         }
+        document.getElementById('addImagesPreview').innerHTML = 
+            '<div class="no-images-message">No images selected yet. Upload images to see preview.</div>';
         
         if (Utils) Utils.showMessage('Form cleared', 'info');
     },
@@ -724,10 +842,14 @@ const UI = {
         const container = document.getElementById('itineraryFields');
         if (!container) return;
         
+        // Count only visible itinerary items
+        const visibleItems = container.querySelectorAll('.itinerary-item');
+        const count = visibleItems.length + 1;
+        
         const newField = document.createElement('div');
         newField.className = 'itinerary-item';
         newField.innerHTML = `
-            <input type="number" placeholder="Day" class="itinerary-day" min="1">
+            <input type="number" placeholder="Order" class="itinerary-day" min="1" value="${count}">
             <input type="text" placeholder="Title" class="itinerary-title">
             <textarea placeholder="Description" class="itinerary-desc" rows="2"></textarea>
         `;
@@ -737,6 +859,10 @@ const UI = {
     addPricingField() {
         const container = document.getElementById('pricingFields');
         if (!container) return;
+        
+        // Count only visible pricing items
+        const visibleItems = container.querySelectorAll('.pricing-item');
+        const count = visibleItems.length + 1;
         
         const newField = document.createElement('div');
         newField.className = 'pricing-item';
@@ -781,7 +907,7 @@ const UI = {
             category: document.getElementById('editCategory').value.trim() || 'general',
             duration: document.getElementById('editDuration').value.trim(),
             description: document.getElementById('editDescription').value.trim(),
-            images: [], // Will be combined with existing and new images
+            images: [], // Will be populated after processing
             included: Utils.parseLines(document.getElementById('editIncluded').value),
             excluded: Utils.parseLines(document.getElementById('editExcluded').value),
             itinerary: this.getEditItineraryData(),
@@ -799,7 +925,7 @@ const UI = {
     
     getItineraryData() {
         const items = [];
-        const itineraryItems = document.querySelectorAll('.itinerary-item');
+        const itineraryItems = document.querySelectorAll('#itineraryFields .itinerary-item');
         
         itineraryItems.forEach(item => {
             const day = item.querySelector('.itinerary-day').value;
@@ -841,7 +967,7 @@ const UI = {
     
     getPricingData() {
         const items = [];
-        const pricingItems = document.querySelectorAll('.pricing-item');
+        const pricingItems = document.querySelectorAll('#pricingFields .pricing-item');
         
         pricingItems.forEach(item => {
             const description = item.querySelector('.pricing-desc').value;
