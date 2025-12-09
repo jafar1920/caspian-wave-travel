@@ -141,34 +141,34 @@
                     <div class="form-group">
                         <label>Itinerary (Title, Description)</label>
                         <div id="itineraryFields">
-    <div class="itinerary-item">
-        <div class="day-number">1</div>
-        <div class="itinerary-content">
-            <input type="text" placeholder="Title" class="itinerary-title">
-            <textarea placeholder="Description" class="itinerary-desc" rows="2"></textarea>
-        </div>
-        <button type="button" class="remove-itinerary-btn">
-            <i class="fas fa-times"></i>
-        </button>
-    </div>
-</div>
+                            <div class="itinerary-item">
+                                <div class="day-number">1</div>
+                                <div class="itinerary-content">
+                                    <input type="text" placeholder="Title" class="itinerary-title">
+                                    <textarea placeholder="Description" class="itinerary-desc" rows="2"></textarea>
+                                </div>
+                                <button type="button" class="remove-itinerary-btn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
                         <button type="button" id="addItineraryBtn" class="btn btn-small">+ Add Itinerary</button>
                     </div>
 
                     <div class="form-group">
-    <label>Pricing</label>
-    <div id="pricingFields">
-        <div class="pricing-item">
-            <input type="text" placeholder="Description" class="pricing-desc">
-            <input type="text" placeholder="Persons" class="pricing-persons">
-            <input type="text" placeholder="Price" class="pricing-price">
-            <button type="button" class="remove-pricing-btn" title="Remove price">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    </div>
-    <button type="button" id="addPricingBtn" class="btn btn-small">+ Add Price</button>
-</div>
+                        <label>Pricing</label>
+                        <div id="pricingFields">
+                            <div class="pricing-item">
+                                <input type="text" placeholder="Description" class="pricing-desc">
+                                <input type="text" placeholder="Persons" class="pricing-persons">
+                                <input type="text" placeholder="Price" class="pricing-price">
+                                <button type="button" class="remove-pricing-btn" title="Remove price">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" id="addPricingBtn" class="btn btn-small">+ Add Price</button>
+                    </div>
 
                     <!-- Additional fields for packages -->
                     <div id="packageFields" style="display: none;">
@@ -268,25 +268,23 @@
                         </div>
                     </div>
 
+                    <!-- FIXED: Correct itinerary section -->
                     <div class="form-group">
-    <label>Itinerary (Title, Description)</label>
-  <div class="form-group">
-    <label>Itinerary (Title, Description)</label>
-    <div id="editItineraryFields">  <!-- ✅ CORRECT: Changed to editItineraryFields -->
-        <!-- Dynamic itinerary fields will be populated by JavaScript -->
-    </div>
-    <button type="button" id="editAddItineraryBtn" class="btn btn-small">+ Add Itinerary</button>  <!-- ✅ CORRECT: Changed to editAddItineraryBtn -->
-</div>
-    <button type="button" id="addItineraryBtn" class="btn btn-small">+ Add Itinerary</button>
-</div>
+                        <label>Itinerary (Title, Description)</label>
+                        <div id="editItineraryFields">
+                            <!-- Dynamic itinerary fields will be populated by JavaScript -->
+                        </div>
+                        <button type="button" id="editAddItineraryBtn" class="btn btn-small">+ Add Itinerary</button>
+                    </div>
 
+                    <!-- FIXED: Correct pricing section -->
                     <div class="form-group">
-    <label>Pricing</label>
-    <div id="editPricingFields">
-        <!-- Dynamic pricing fields will go here -->
-    </div>
-    <button type="button" id="editAddPricingBtn" class="btn btn-small">+ Add Price</button>
-</div>
+                        <label>Pricing</label>
+                        <div id="editPricingFields">
+                            <!-- Dynamic pricing fields will go here -->
+                        </div>
+                        <button type="button" id="editAddPricingBtn" class="btn btn-small">+ Add Price</button>
+                    </div>
 
                     <!-- Additional fields for packages in edit -->
                     <div id="editPackageFields" style="display: none;">
@@ -322,105 +320,90 @@
                 </p>
                 <div class="confirm-actions">
                     <button id="confirmCancel" class="btn btn-secondary">Cancel</button>
+                    <!-- NO onclick attribute here - handled by ui-modals.js -->
                     <button id="confirmDelete" class="btn btn-danger">Delete</button>
                 </div>
             </div>
         </div>
     </div>
 
-  
-   <!-- Load modules -->
-<script src="js/admin/utils.js"></script>
-<script src="js/admin/auth.js"></script>
-<script src="js/admin/firebase.js"></script>
-<script src="js/admin/image-upload.js"></script>
-<script src="js/admin/dashboard.js"></script>
-<script src="js/admin/tours.js"></script>
+    <!-- Load modules -->
+    <script src="js/admin/utils.js"></script>
+    <script src="js/admin/auth.js"></script>
+    <script src="js/admin/firebase.js"></script>
+    <script src="js/admin/image-upload.js"></script>
+    <script src="js/admin/dashboard.js"></script>
+    <script src="js/admin/tours.js"></script>
 
-<!-- Load UI modules -->
-<script src="js/admin/ui/ui-core.js"></script>
-<script src="js/admin/ui/ui-tabs.js"></script>
-<script src="js/admin/ui/ui-forms.js"></script>
-<script src="js/admin/ui/ui-modals.js"></script>
-<script src="js/admin/ui/ui-images.js"></script>
-<script src="js/admin/ui/ui-tour-editor.js"></script>
-<script src="js/admin/ui/ui-helpers.js"></script>
+    <!-- Load UI modules -->
+    <script src="js/admin/ui/ui-core.js"></script>
+    <script src="js/admin/ui/ui-tabs.js"></script>
+    <script src="js/admin/ui/ui-forms.js"></script>
+    <script src="js/admin/ui/ui-modals.js"></script>
+    <script src="js/admin/ui/ui-images.js"></script>
+    <script src="js/admin/ui/ui-tour-editor.js"></script>
+    <script src="js/admin/ui/ui-helpers.js"></script>
 
-<!-- Initialize -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Admin panel loading...');
-        
-        // Initialize Auth
-        if (typeof Auth !== 'undefined') {
-            Auth.init();
-            console.log('✅ Auth initialized');
-        }
-    });
-</script>
+    <!-- Initialize -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Admin panel loading...');
+            
+            // Initialize Auth
+            if (typeof Auth !== 'undefined') {
+                Auth.init();
+                console.log('✅ Auth initialized');
+            }
+        });
+    </script>
 
-
-<!-- Just for debug -->
-
-<script>
-    // Debug: Check all modules are loaded
-    setTimeout(() => {
-        console.log('=== MODULE CHECK ===');
-        console.log('Auth:', typeof Auth !== 'undefined');
-        console.log('FirebaseAdmin:', typeof FirebaseAdmin !== 'undefined');
-        console.log('Dashboard:', typeof Dashboard !== 'undefined');
-        console.log('Tours:', typeof Tours !== 'undefined');
-        console.log('UICore:', typeof UICore !== 'undefined');
-        console.log('UITabs:', typeof UITabs !== 'undefined');
-        console.log('UIForms:', typeof UIForms !== 'undefined');
-        console.log('UIModals:', typeof UIModals !== 'undefined');
-        console.log('UIImages:', typeof UIImages !== 'undefined');
-        console.log('UITourEditor:', typeof UITourEditor !== 'undefined');
-        console.log('UIHelpers:', typeof UIHelpers !== 'undefined');
-        console.log('Utils:', typeof Utils !== 'undefined');
-        console.log('ImageUpload:', typeof ImageUpload !== 'undefined');
-        console.log('=== END CHECK ===');
-        
-        // Check if refresh button exists
-        console.log('Refresh button element:', document.getElementById('refreshBtn'));
-    }, 1000);
-</script>
-
-<script>
-// Debug form data collection
-console.log('=== FORM DEBUG ===');
-
-// Check all edit form elements
-const editFormElements = [
-    'editTourId', 'editType', 'editTitle', 'editCategory', 'editDuration',
-    'editDescription', 'editIncluded', 'editExcluded', 'editAvailability'
-];
-
-editFormElements.forEach(id => {
-    const element = document.getElementById(id);
-    console.log(`${id}:`, element ? 'EXISTS' : 'MISSING', element);
-});
-
-// Check itinerary fields
-const itineraryFields = document.getElementById('editItineraryFields');
-console.log('editItineraryFields:', itineraryFields);
-if (itineraryFields) {
-    const items = itineraryFields.querySelectorAll('.itinerary-item');
-    console.log('Itinerary items count:', items.length);
-}
-
-// Check pricing fields  
-const pricingFields = document.getElementById('editPricingFields');
-console.log('editPricingFields:', pricingFields);
-if (pricingFields) {
-    const items = pricingFields.querySelectorAll('.pricing-item');
-    console.log('Pricing items count:', items.length);
-}
-
-console.log('=== END DEBUG ===');
-</script>
-
-
-
+    <!-- Debug script (optional - can remove after testing) -->
+    <script>
+        // Debug: Check all modules are loaded
+        setTimeout(() => {
+            console.log('=== MODULE CHECK ===');
+            console.log('Auth:', typeof Auth !== 'undefined');
+            console.log('FirebaseAdmin:', typeof FirebaseAdmin !== 'undefined');
+            console.log('Dashboard:', typeof Dashboard !== 'undefined');
+            console.log('Tours:', typeof Tours !== 'undefined');
+            console.log('UICore:', typeof UICore !== 'undefined');
+            console.log('UITabs:', typeof UITabs !== 'undefined');
+            console.log('UIForms:', typeof UIForms !== 'undefined');
+            console.log('UIModals:', typeof UIModals !== 'undefined');
+            console.log('UIImages:', typeof UIImages !== 'undefined');
+            console.log('UITourEditor:', typeof UITourEditor !== 'undefined');
+            console.log('UIHelpers:', typeof UIHelpers !== 'undefined');
+            console.log('Utils:', typeof Utils !== 'undefined');
+            console.log('ImageUpload:', typeof ImageUpload !== 'undefined');
+            console.log('=== END CHECK ===');
+            
+            // Check if refresh button exists
+            console.log('Refresh button element:', document.getElementById('refreshBtn'));
+            
+            // Check for duplicate IDs
+            const duplicateCheck = () => {
+                const elements = document.querySelectorAll('[id]');
+                const ids = {};
+                const duplicates = [];
+                
+                elements.forEach(el => {
+                    const id = el.id;
+                    if (ids[id]) {
+                        duplicates.push(id);
+                    } else {
+                        ids[id] = true;
+                    }
+                });
+                
+                if (duplicates.length > 0) {
+                    console.warn('❌ Duplicate IDs found:', duplicates);
+                } else {
+                    console.log('✅ No duplicate IDs found');
+                }
+            };
+            
+            duplicateCheck();
+        }, 1000);
+    </script>
 </body>
 </html>

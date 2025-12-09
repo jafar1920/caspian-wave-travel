@@ -1,4 +1,4 @@
-// Tours CRUD Operations
+// Tours CRUD Operations - UPDATED WITH ORGANIZED STORAGE
 const Tours = {
     async addTour() {
         const submitBtn = document.querySelector('#addTourForm button[type="submit"]');
@@ -65,7 +65,8 @@ const Tours = {
             // Upload images
             let uploadedImageUrls = [];
             try {
-                uploadedImageUrls = await this.uploadImagesForAddForm(tourId);
+                // =================== UPDATED: PASS TYPE TO UPLOAD ===================
+                uploadedImageUrls = await this.uploadImagesForAddForm(tourId, formData.type);
                 if (uploadedImageUrls.length === 0) {
                     throw new Error('No images were uploaded successfully');
                 }
@@ -124,73 +125,74 @@ const Tours = {
         }
     },
 
-    async uploadImagesForAddForm(tourId) {
-    if (!window.selectedFiles || !window.selectedFiles.add || window.selectedFiles.add.length === 0) {
-        return [];
-    }
-    
-    const files = window.selectedFiles.add;
-    const progressBar = document.getElementById('uploadProgress');
-    
-    try {
-        // Show progress
-        if (progressBar) {
-            progressBar.style.display = 'block';
-            const progressFill = progressBar.querySelector('.progress-fill');
-            const progressText = progressBar.querySelector('.progress-text');
+    // =================== UPDATED: ADD TYPE PARAMETER ===================
+    async uploadImagesForAddForm(tourId, itemType = 'tour') {
+        if (!window.selectedFiles || !window.selectedFiles.add || window.selectedFiles.add.length === 0) {
+            return [];
+        }
+        
+        const files = window.selectedFiles.add;
+        const progressBar = document.getElementById('uploadProgress');
+        
+        try {
+            // Show progress
+            if (progressBar) {
+                progressBar.style.display = 'block';
+                const progressFill = progressBar.querySelector('.progress-fill');
+                const progressText = progressBar.querySelector('.progress-text');
+                
+                progressFill.style.width = '0%';
+                progressText.textContent = `Uploading 0/${files.length} images...`;
+            }
             
-            progressFill.style.width = '0%';
-            progressText.textContent = `Uploading 0/${files.length} images...`;
-        }
-        
-        // UPLOAD ALL IMAGES IN PARALLEL (FASTER!)
-        const uploadPromises = files.map((file, index) => 
-            ImageUpload.uploadImage(file, tourId).catch(error => {
-                console.error(`Error uploading image ${file.name}:`, error);
-                Utils.showMessage(`Failed to upload ${file.name}`, 'error');
-                return null; // Return null for failed uploads
-            })
-        );
-        
-        // Track progress
-        let completed = 0;
-        uploadPromises.forEach(promise => {
-            promise.then(() => {
-                completed++;
-                if (progressBar) {
-                    const progressFill = progressBar.querySelector('.progress-fill');
-                    const progressText = progressBar.querySelector('.progress-text');
-                    const percent = (completed / files.length) * 100;
-                    progressFill.style.width = `${percent}%`;
-                    progressText.textContent = `Uploading ${completed}/${files.length} images...`;
-                }
+            // UPLOAD ALL IMAGES IN PARALLEL (FASTER!)
+            // =================== UPDATED: PASS TYPE TO UPLOAD ===================
+            const uploadPromises = files.map((file, index) => 
+                ImageUpload.uploadImage(file, tourId, { type: itemType }).catch(error => {
+                    console.error(`Error uploading image ${file.name}:`, error);
+                    Utils.showMessage(`Failed to upload ${file.name}`, 'error');
+                    return null; // Return null for failed uploads
+                })
+            );
+            
+            // Track progress
+            let completed = 0;
+            uploadPromises.forEach(promise => {
+                promise.then(() => {
+                    completed++;
+                    if (progressBar) {
+                        const progressFill = progressBar.querySelector('.progress-fill');
+                        const progressText = progressBar.querySelector('.progress-text');
+                        const percent = (completed / files.length) * 100;
+                        progressFill.style.width = `${percent}%`;
+                        progressText.textContent = `Uploading ${completed}/${files.length} images...`;
+                    }
+                });
             });
-        });
-        
-        // Wait for all uploads (parallel)
-        const results = await Promise.all(uploadPromises);
-        
-        // Filter out failed uploads (null values)
-        const uploadedUrls = results.filter(url => url !== null);
-        
-        // Hide progress
-        if (progressBar) {
-            setTimeout(() => {
+            
+            // Wait for all uploads (parallel)
+            const results = await Promise.all(uploadPromises);
+            
+            // Filter out failed uploads (null values)
+            const uploadedUrls = results.filter(url => url !== null);
+            
+            // Hide progress
+            if (progressBar) {
+                setTimeout(() => {
+                    progressBar.style.display = 'none';
+                }, 1000);
+            }
+            
+            return uploadedUrls;
+            
+        } catch (error) {
+            console.error('Error uploading images:', error);
+            if (progressBar) {
                 progressBar.style.display = 'none';
-            }, 1000);
+            }
+            throw error;
         }
-        
-        return uploadedUrls;
-        
-    } catch (error) {
-        console.error('Error uploading images:', error);
-        if (progressBar) {
-            progressBar.style.display = 'none';
-        }
-        throw error;
-    }
-},
-    
+    },
     
     async updateTour() {
         const submitBtn = document.querySelector('#editTourForm button[type="submit"]');
@@ -237,7 +239,8 @@ const Tours = {
             await this.deleteImagesFromStorage(imagesToDelete);
             
             // Step 2: Upload new images
-            const newImageUrls = await this.uploadNewImages(newImagesToUpload, tourId);
+            // =================== UPDATED: PASS TYPE TO UPLOAD ===================
+            const newImageUrls = await this.uploadNewImages(newImagesToUpload, tourId, existingTour.type);
             
             // Step 3: Build final images array (existing minus deletions plus new)
             const finalImages = existingImages
@@ -292,7 +295,8 @@ const Tours = {
         await Promise.all(deletePromises);
     },
     
-    async uploadNewImages(files, tourId) {
+    // =================== UPDATED: ADD TYPE PARAMETER ===================
+    async uploadNewImages(files, tourId, itemType = 'tour') {
         if (!files || files.length === 0) return [];
         
         const progressBar = document.getElementById('editUploadProgress');
@@ -311,7 +315,8 @@ const Tours = {
             
             for (let i = 0; i < files.length; i++) {
                 try {
-                    const url = await ImageUpload.uploadImage(files[i], tourId);
+                    // =================== UPDATED: PASS TYPE TO UPLOAD ===================
+                    const url = await ImageUpload.uploadImage(files[i], tourId, { type: itemType });
                     uploadedUrls.push(url);
                     
                     // Update progress
@@ -346,6 +351,7 @@ const Tours = {
         }
     },
     
+    // =================== UPDATED DELETE FUNCTION WITH FOLDER CLEANUP ===================
     async deleteTour(tourId, fromEditModal = false) {
         if (!tourId) return;
         
@@ -366,6 +372,65 @@ const Tours = {
         
         // Show custom confirmation modal
         document.getElementById('confirmModal').style.display = 'flex';
+    },
+    
+    // =================== NEW: EXECUTE DELETE AFTER CONFIRMATION ===================
+    async executeDeleteTour() {
+        const tourId = window.pendingDeleteTourId;
+        const fromEditModal = window.pendingDeleteFromEditModal;
+        
+        if (!tourId) return;
+        
+        try {
+            // Get tour info before deletion
+            const tour = Dashboard.getTour(tourId);
+            
+            // Delete from Firestore
+            await FirebaseAdmin.deleteTour(tourId);
+            
+            // =================== NEW: DELETE IMAGE FOLDER FROM STORAGE ===================
+            if (tour) {
+                try {
+                    // Delete entire folder for this tour/package
+                    await ImageUpload.deleteItemFolder(tourId, tour.type);
+                    console.log(`✅ Cleaned up storage folder for ${tour.type} ${tourId}`);
+                } catch (storageError) {
+                    console.warn('Could not delete storage folder (might not exist):', storageError);
+                    // Continue even if storage cleanup fails
+                }
+            }
+            
+            // Clear temporary data
+            window.pendingDeleteTourId = null;
+            window.pendingDeleteFromEditModal = null;
+            
+            // Close confirmation modal
+            document.getElementById('confirmModal').style.display = 'none';
+            
+            // Close edit modal if deleting from there
+            if (fromEditModal) {
+                document.getElementById('editModal').style.display = 'none';
+            }
+            
+            // Show success message
+            const itemType = tour?.type === 'package' ? 'Package' : 'Tour';
+            if (Utils) Utils.showMessage(`${itemType} deleted successfully!`, 'success');
+            
+            // Refresh the list
+            setTimeout(() => {
+                if (Dashboard && Dashboard.refreshData) {
+                    Dashboard.refreshData();
+                }
+            }, 500);
+            
+        } catch (error) {
+            console.error('Error deleting tour:', error);
+            if (Utils) Utils.showMessage('Failed to delete item: ' + error.message, 'error');
+            
+            // Clear temporary data even on error
+            window.pendingDeleteTourId = null;
+            window.pendingDeleteFromEditModal = null;
+        }
     }
 };
 

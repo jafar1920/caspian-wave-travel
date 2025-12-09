@@ -1,4 +1,4 @@
-// Image Upload Manager
+// Image Upload Manager - UPDATED WITH BACKWARD COMPATIBILITY
 const ImageUpload = {
     storage: null,
     
@@ -12,81 +12,120 @@ const ImageUpload = {
         console.log('✅ Image Upload initialized');
     },
     
-    // Upload a single image with organized storage
-    // In image-upload.js, update the uploadImage function:
-async uploadImage(file, tourId) {
-    return new Promise((resolve, reject) => {
-        if (!file || !tourId) {
-            reject('No file or tourId provided');
+    // =================== MAIN UPLOAD FUNCTION ===================
+    async uploadImage(file, tourId, options = {}) {
+        return new Promise((resolve, reject) => {
+            if (!file || !tourId) {
+                reject('No file or tourId provided');
+                return;
+            }
+            
+            // OPTIMIZATION: Skip compression for small files
+            const maxSizeForCompression = 2 * 1024 * 1024; // 2MB
+            let fileToUpload = file;
+            
+            // Only compress if file is large
+            if (file.size > maxSizeForCompression && this.compressImage) {
+                this.compressImage(file, 1600, 0.7).then(compressedFile => {
+                    fileToUpload = compressedFile;
+                    this.doUpload(fileToUpload, tourId, options, resolve, reject);
+                }).catch(() => {
+                    this.doUpload(file, tourId, options, resolve, reject);
+                });
+            } else {
+                this.doUpload(file, tourId, options, resolve, reject);
+            }
+        });
+    },
+    
+    // =================== UPLOAD LOGIC ===================
+    doUpload(file, tourId, options, resolve, reject) {
+        try {
+            // Validate file first
+            this.validateFile(file);
+        } catch (validationError) {
+            reject(validationError);
             return;
         }
         
-        // OPTIMIZATION: Skip compression for small files
-        const maxSizeForCompression = 2 * 1024 * 1024; // 2MB
-        let fileToUpload = file;
+        // Create filename
+        const timestamp = Date.now();
+        const randomStr = Math.random().toString(36).substr(2, 9);
+        const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+        const fileName = `img_${timestamp}_${randomStr}.${fileExt}`;
         
-        // Only compress if file is large
-        if (file.size > maxSizeForCompression && this.compressImage) {
-            // Optional: Add compression for large files
-            this.compressImage(file, 1600, 0.7).then(compressedFile => {
-                fileToUpload = compressedFile;
-                this.doUpload(fileToUpload, tourId, resolve, reject);
-            }).catch(() => {
-                // If compression fails, use original
-                this.doUpload(file, tourId, resolve, reject);
-            });
-        } else {
-            this.doUpload(file, tourId, resolve, reject);
-        }
-    });
-},
-
-// Separate upload logic
-doUpload(file, tourId, resolve, reject) {
-    // Create filename
-    const timestamp = Date.now();
-    const randomStr = Math.random().toString(36).substr(2, 9);
-    const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
-    const fileName = `img_${timestamp}_${randomStr}.${fileExt}`;
-    
-    // Storage path
-    const storagePath = `tours/${tourId}/images/${fileName}`;
-    
-    // Upload
-    const storageRef = this.storage.ref(storagePath);
-    const metadata = {
-        contentType: file.type,
-        customMetadata: {
-            originalName: file.name,
-            tourId: tourId
-        }
-    };
-    
-    const uploadTask = storageRef.put(file, metadata);
-    
-    uploadTask.on('state_changed',
-        null, // No progress callback (handled by UI)
-        (error) => reject(error),
-        async () => {
-            try {
-                const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-                resolve(downloadURL);
-            } catch (error) {
-                reject(error);
+        // =================== KEY CHANGE: ORGANIZED STORAGE PATH ===================
+        // Options can specify type ('tour' or 'package'), defaults to 'tour' for backward compatibility
+        const itemType = options.type || 'tour';
+        const storagePath = this.getStoragePath(fileName, tourId, itemType);
+        // =================== END OF KEY CHANGE ===================
+        
+        // Upload
+        const storageRef = this.storage.ref(storagePath);
+        const metadata = {
+            contentType: file.type,
+            customMetadata: {
+                originalName: file.name,
+                tourId: tourId,
+                itemType: itemType,
+                uploadTime: new Date().toISOString()
             }
-        }
-    );
-},
+        };
+        
+        const uploadTask = storageRef.put(file, metadata);
+        
+        uploadTask.on('state_changed',
+            null,
+            (error) => reject(error),
+            async () => {
+                try {
+                    const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                    resolve(downloadURL);
+                } catch (error) {
+                    reject(error);
+                }
+            }
+        );
+    },
     
-    // Upload multiple images
-    async uploadMultipleImages(files, tourId) {
+    // =================== NEW: GET ORGANIZED STORAGE PATH ===================
+    getStoragePath(fileName, itemId, itemType = 'tour') {
+        // Create organized path based on item type
+        const folder = itemType === 'package' ? 'packages' : 'tours';
+        return `${folder}/${itemId}/images/${fileName}`;
+        
+        // Old path (for reference): `tours/${tourId}/images/${fileName}`
+        // New path examples:
+        // - Tours: `tours/{tour-id}/images/{filename}`
+        // - Packages: `packages/{package-id}/images/{filename}`
+    },
+    
+    // =================== VALIDATION ===================
+    validateFile(file) {
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        
+        if (!allowedTypes.includes(file.type)) {
+            throw new Error(`File type not allowed: ${file.type}. Allowed: JPEG, PNG, GIF, WebP`);
+        }
+        
+        if (file.size > maxSize) {
+            throw new Error(`File too large: ${(file.size / 1024 / 1024).toFixed(2)}MB. Max: 5MB`);
+        }
+        
+        return true;
+    },
+    
+    // =================== MULTIPLE IMAGES (WITH BACKWARD COMPATIBILITY) ===================
+    async uploadMultipleImages(files, tourId, options = {}) {
         if (!files || files.length === 0) {
             return [];
         }
         
         const uploadPromises = [];
         for (let i = 0; i < files.length; i++) {
-            uploadPromises.push(this.uploadImage(files[i], tourId));
+            // Pass options to each upload
+            uploadPromises.push(this.uploadImage(files[i], tourId, options));
         }
         
         try {
@@ -98,7 +137,7 @@ doUpload(file, tourId, resolve, reject) {
         }
     },
     
-    // Delete an image from storage - FIXED VERSION
+    // =================== DELETE IMAGE (BACKWARD COMPATIBLE) ===================
     async deleteImage(imageUrl) {
         try {
             console.log('🗑️ Attempting to delete image:', imageUrl);
@@ -168,7 +207,50 @@ doUpload(file, tourId, resolve, reject) {
         }
     },
     
-    // Optional: Compress image before upload (client-side)
+    // =================== NEW: DELETE ENTIRE FOLDER ===================
+    async deleteItemFolder(itemId, itemType = 'tour') {
+        try {
+            const folderPath = itemType === 'package' ? `packages/${itemId}` : `tours/${itemId}`;
+            
+            console.log(`🗑️ Deleting folder: ${folderPath}`);
+            
+            const folderRef = this.storage.ref().child(folderPath);
+            
+            // Try to list and delete everything in the folder
+            try {
+                const listResult = await folderRef.listAll();
+                
+                // Delete all files
+                const deletePromises = [];
+                listResult.items.forEach(itemRef => {
+                    deletePromises.push(itemRef.delete());
+                });
+                
+                // Delete files in subfolders
+                for (const prefix of listResult.prefixes) {
+                    const subFolderResult = await prefix.listAll();
+                    subFolderResult.items.forEach(itemRef => {
+                        deletePromises.push(itemRef.delete());
+                    });
+                }
+                
+                await Promise.all(deletePromises);
+                console.log(`✅ Successfully deleted folder: ${folderPath}`);
+                
+            } catch (listError) {
+                // Folder might not exist or be empty
+                console.log(`📁 Folder ${folderPath} might not exist or is empty:`, listError.message);
+            }
+            
+            return true;
+            
+        } catch (error) {
+            console.error(`❌ Error deleting folder for ${itemType} ${itemId}:`, error);
+            return false;
+        }
+    },
+    
+    // =================== COMPRESSION (UNCHANGED) ===================
     compressImage(file, maxWidth = 1920, quality = 0.8) {
         return new Promise((resolve, reject) => {
             // Only compress images
