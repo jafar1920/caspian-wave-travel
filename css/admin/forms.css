@@ -89,3 +89,258 @@
 .pricing-item:not(:last-child) {
     margin-bottom: 15px;
 }
+
+/* Itinerary styling - add to existing itinerary-item styles */
+.itinerary-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    background: #f7fafc;
+    padding: 1.5rem;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.day-number {
+    width: 40px;
+    height: 40px;
+    background: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 0.5rem;
+}
+
+/* Remove the input field styles for itinerary-day since we're not using it */
+.itinerary-item input[type="number"] {
+    display: none; /* Hide the day number input field */
+}
+
+/* Create a content wrapper for title and description */
+.itinerary-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.itinerary-title {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e0;
+    border-radius: 4px;
+    font-size: 16px;
+    background: white;
+    transition: border-color 0.2s;
+}
+
+.itinerary-title:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.itinerary-desc {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e0;
+    border-radius: 4px;
+    min-height: 80px;
+    resize: vertical;
+    font-size: 14px;
+    font-family: inherit;
+    background: white;
+    transition: border-color 0.2s;
+}
+
+.itinerary-desc:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.remove-itinerary-btn {
+    background: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.5rem;
+    transition: background 0.2s;
+}
+
+.remove-itinerary-btn:hover {
+    background: #c53030;
+}
+
+/* Edit modal specific styles */
+#editItineraryFields .itinerary-item {
+    position: relative;
+}
+
+#editItineraryFields .field-header {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    padding: 0;
+    margin: 0;
+}
+
+#editItineraryFields .btn-remove-itinerary {
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    background: #e53e3e;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#editItineraryFields .btn-remove-itinerary:hover {
+    background: #c53030;
+}
+
+/* Remove button for pricing items */
+.btn-remove-pricing {
+    background: #e53e3e;
+    color: white;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.btn-remove-pricing:hover {
+    background: #c53030;
+}
+
+/* Ensure proper spacing in forms */
+#itineraryFields .itinerary-item {
+    margin-bottom: 15px;
+}
+
+#itineraryFields .itinerary-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Add form specific remove button positioning */
+#itineraryFields .remove-itinerary-btn {
+    margin-left: auto;
+}
+
+/* Edit form specific layout */
+#editItineraryFields .itinerary-item {
+    padding-top: 40px; /* Make room for the field-header */
+}
+
+#editItineraryFields .day-number {
+    margin-top: 20px; /* Adjust for field-header */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .itinerary-item {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .day-number {
+        align-self: flex-start;
+    }
+    
+    .remove-itinerary-btn {
+        align-self: flex-end;
+        margin-top: 0;
+    }
+}
+
+/* Pricing item styling */
+.pricing-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    position: relative;
+}
+
+.pricing-desc,
+.pricing-persons,
+.pricing-price {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.remove-pricing-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+
+.remove-pricing-btn:hover {
+    background: #c82333;
+}
+
+/* Edit modal specific pricing styling */
+#editPricingFields .pricing-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+}
+
+#editPricingFields .field-header {
+    display: none; /* Hide the old header since we have remove buttons */
+}
+
+/* Responsive adjustments for pricing */
+@media (max-width: 768px) {
+    .pricing-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    
+    .remove-pricing-btn {
+        align-self: flex-end;
+    }
+}

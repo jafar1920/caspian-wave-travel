@@ -21,63 +21,61 @@ async uploadImage(file, tourId) {
             return;
         }
         
-        // Sanitize filename
-        const originalName = file.name.toLowerCase();
-        const sanitizedName = originalName
-            .replace(/[^a-z0-9._-]/g, '_')
-            .substring(0, 100);
+        // OPTIMIZATION: Skip compression for small files
+        const maxSizeForCompression = 2 * 1024 * 1024; // 2MB
+        let fileToUpload = file;
         
-        // Create organized path structure
-        const timestamp = Date.now();
-        const randomStr = Math.random().toString(36).substr(2, 9);
-        const fileExt = sanitizedName.split('.').pop() || 'jpg';
-        const fileName = `img_${timestamp}_${randomStr}.${fileExt}`;
-        
-        // Organized folder structure
-        const storagePath = `tours/${tourId}/images/${fileName}`;
-        
-        // Create storage reference
-        const storageRef = this.storage.ref(storagePath);
-        const metadata = {
-            contentType: file.type,
-            customMetadata: {
-                originalName: file.name,
-                uploadTime: new Date().toISOString(),
-                tourId: tourId
-            }
-        };
-        
-        const uploadTask = storageRef.put(file, metadata);
-        
-        uploadTask.on('state_changed',
-            (snapshot) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                // Progress updates handled by UI
-            },
-            (error) => {
-                console.error('❌ Upload error:', error);
-                reject(error);
-            },
-            async () => {
-                try {
-                    // Get download URL
-                    const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-                    
-                    // FIXED: Better logging
-                    console.log('✅ Image uploaded successfully:', {
-                        fileName: fileName,
-                        size: `${(file.size / 1024 / 1024).toFixed(2)}MB`,
-                        urlPreview: downloadURL.substring(0, 80) + '...'
-                    });
-                    
-                    resolve(downloadURL);
-                } catch (error) {
-                    console.error('❌ Error getting download URL:', error);
-                    reject(error);
-                }
-            }
-        );
+        // Only compress if file is large
+        if (file.size > maxSizeForCompression && this.compressImage) {
+            // Optional: Add compression for large files
+            this.compressImage(file, 1600, 0.7).then(compressedFile => {
+                fileToUpload = compressedFile;
+                this.doUpload(fileToUpload, tourId, resolve, reject);
+            }).catch(() => {
+                // If compression fails, use original
+                this.doUpload(file, tourId, resolve, reject);
+            });
+        } else {
+            this.doUpload(file, tourId, resolve, reject);
+        }
     });
+},
+
+// Separate upload logic
+doUpload(file, tourId, resolve, reject) {
+    // Create filename
+    const timestamp = Date.now();
+    const randomStr = Math.random().toString(36).substr(2, 9);
+    const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    const fileName = `img_${timestamp}_${randomStr}.${fileExt}`;
+    
+    // Storage path
+    const storagePath = `tours/${tourId}/images/${fileName}`;
+    
+    // Upload
+    const storageRef = this.storage.ref(storagePath);
+    const metadata = {
+        contentType: file.type,
+        customMetadata: {
+            originalName: file.name,
+            tourId: tourId
+        }
+    };
+    
+    const uploadTask = storageRef.put(file, metadata);
+    
+    uploadTask.on('state_changed',
+        null, // No progress callback (handled by UI)
+        (error) => reject(error),
+        async () => {
+            try {
+                const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                resolve(downloadURL);
+            } catch (error) {
+                reject(error);
+            }
+        }
+    );
 },
     
     // Upload multiple images

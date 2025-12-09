@@ -139,16 +139,16 @@ const Dashboard = {
     },
     
     setupLogoutButton() {
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (Auth && Auth.logout) {
-                    Auth.logout();
-                }
-            });
-        }
-    },
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (Auth && Auth.logout) {
+                Auth.logout();
+            }
+        });
+    }
+},
     
     async loadTours(forceRefresh = false) {
         try {
@@ -231,39 +231,35 @@ const Dashboard = {
             const availability = isPackage && tour.availability ? ` • ${tour.availability}` : '';
             
             // REMOVED inline onclick handlers - using event delegation instead
-            return `
-                <div class="tour-card" data-id="${tour.id}">
-                    <div class="tour-info">
-                        <div style="display: flex; justify-content: space-between; align-items: start;">
-                            <h3>${tour.title || 'Untitled'}</h3>
-                            <span class="${badgeClass}">${badgeText}</span>
-                        </div>
-                        <div class="tour-meta">
-                            <span><i class="far fa-clock"></i> ${tour.duration || 'N/A'}</span>
-                            <span>•</span>
-                            <span><i class="fas fa-tag"></i> ${tour.category || 'general'}</span>
-                            <span>•</span>
-                            <span><i class="far fa-calendar"></i> ${Utils.formatDate(tour.createdAt)}</span>
-                            ${availability ? '<span>•</span><span><i class="fas fa-calendar-check"></i> ' + tour.availability + '</span>' : ''}
-                        </div>
-                        <p class="tour-description">${(tour.description || '').substring(0, 150)}...</p>
-                        <div class="tour-stats">
-                            <span class="stat"><i class="fas fa-image"></i> ${tour.images ? tour.images.length : 0} images</span>
-                            <span class="stat"><i class="fas fa-list-ol"></i> ${tour.itinerary ? tour.itinerary.length : 0} days</span>
-                            <span class="stat"><i class="fas fa-eye"></i> ${tour.views || 0} views</span>
-                            ${tour.isActive === false ? '<span class="stat inactive"><i class="fas fa-ban"></i> Inactive</span>' : ''}
-                        </div>
-                    </div>
-                    <div class="tour-actions">
-                        <button class="btn btn-small btn-edit" data-id="${tour.id}">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button class="btn btn-small btn-delete" data-id="${tour.id}">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </div>
-                </div>
-            `;
+           return `
+    <div class="tour-card" data-id="${tour.id}">
+        <div class="tour-info">
+            <div class="tour-header">
+                <h3 class="tour-title">${tour.title || 'Untitled'}
+                    <span class="tour-badge ${badgeClass}">${badgeText}</span>
+                </h3>
+            </div>
+            <div class="tour-meta">
+                <span><i class="far fa-clock"></i> ${tour.duration || 'N/A'}</span>
+                <span>•</span>
+                <span><i class="fas fa-tag"></i> ${tour.category || 'general'}</span>
+                <span>•</span>
+                <span><i class="far fa-calendar"></i> ${Utils.formatDate(tour.createdAt)}</span>
+                ${availability ? '<span>•</span><span><i class="fas fa-calendar-check"></i> ' + tour.availability + '</span>' : ''}
+            </div>
+            <p class="tour-description">${(tour.description || '').substring(0, 150)}...</p>
+        </div>
+        <div class="tour-actions">
+            <button class="btn btn-small btn-edit" data-id="${tour.id}">
+                <i class="fas fa-edit"></i> Edit
+            </button>
+            <button class="btn btn-small btn-delete" data-id="${tour.id}">
+                <i class="fas fa-trash"></i> Delete
+            </button>
+        </div>
+    </div>
+`;
+
         }).join('');
     },
     

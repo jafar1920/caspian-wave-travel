@@ -59,83 +59,98 @@ const UIModals = {
     },
     
     setupConfirmationModal() {
-        const confirmModal = document.getElementById('confirmModal');
-        const confirmCancel = document.getElementById('confirmCancel');
-        const confirmDelete = document.getElementById('confirmDelete');
-        const confirmCloseBtns = document.querySelectorAll('.confirm-close');
-        
-        // Close modal buttons
-        confirmCloseBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                confirmModal.style.display = 'none';
-                window.pendingDeleteTourId = null;
-                window.pendingDeleteFromEditModal = false;
-            });
-        });
-        
-        // Cancel button
-        confirmCancel.addEventListener('click', () => {
+    const confirmModal = document.getElementById('confirmModal');
+    const confirmCancel = document.getElementById('confirmCancel');
+    const confirmDelete = document.getElementById('confirmDelete');
+    const confirmCloseBtns = document.querySelectorAll('.confirm-close');
+    
+    // Close modal buttons
+    confirmCloseBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
             confirmModal.style.display = 'none';
-            window.pendingDeleteTourId = null;
-            window.pendingDeleteFromEditModal = false;
+            this.clearConfirmationState();
         });
+    });
+    
+    // Cancel button
+    confirmCancel.addEventListener('click', () => {
+        confirmModal.style.display = 'none';
+        this.clearConfirmationState();
+    });
+    
+    // Delete/Logout button
+    confirmDelete.addEventListener('click', async () => {
+        const tourId = window.pendingDeleteTourId;
+        const fromEditModal = window.pendingDeleteFromEditModal;
         
-        // Delete button
-        confirmDelete.addEventListener('click', async () => {
-            const tourId = window.pendingDeleteTourId;
-            const fromEditModal = window.pendingDeleteFromEditModal;
+        // Check if this is a logout confirmation
+        if (window.confirmLogoutCallback) {
+            window.confirmLogoutCallback();
+            confirmModal.style.display = 'none';
+            return;
+        }
+        
+        // Otherwise it's a tour delete confirmation
+        if (!tourId) {
+            confirmModal.style.display = 'none';
+            return;
+        }
+        
+        try {
+            await FirebaseAdmin.deleteTour(tourId);
             
-            if (!tourId) {
-                confirmModal.style.display = 'none';
-                return;
+            // Remove from local list
+            if (Dashboard) {
+                Dashboard.removeFromList(tourId);
             }
             
-            try {
-                await FirebaseAdmin.deleteTour(tourId);
-                
-                // Remove from local list
-                if (Dashboard) {
-                    Dashboard.removeFromList(tourId);
-                }
-                
-                // Close modals
-                confirmModal.style.display = 'none';
-                if (fromEditModal) {
-                    document.getElementById('editModal').style.display = 'none';
-                    this.clearEditModalTempData();
-                }
-                
-                // Clear pending delete
-                window.pendingDeleteTourId = null;
-                window.pendingDeleteFromEditModal = false;
-                
-                if (Utils) Utils.showMessage('Item deleted successfully!', 'success');
-                
-            } catch (error) {
-                console.error('Error deleting item:', error);
-                confirmModal.style.display = 'none';
-                if (Utils) Utils.showMessage('Failed to delete item: ' + error.message, 'error');
+            // Close modals
+            confirmModal.style.display = 'none';
+            if (fromEditModal) {
+                document.getElementById('editModal').style.display = 'none';
+                this.clearEditModalTempData();
             }
-        });
-        
-        // Close on outside click
-        confirmModal.addEventListener('click', (e) => {
-            if (e.target === confirmModal) {
-                confirmModal.style.display = 'none';
-                window.pendingDeleteTourId = null;
-                window.pendingDeleteFromEditModal = false;
-            }
-        });
-        
-        // Close on Escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && confirmModal.style.display === 'flex') {
-                confirmModal.style.display = 'none';
-                window.pendingDeleteTourId = null;
-                window.pendingDeleteFromEditModal = false;
-            }
-        });
+            
+            // Clear pending delete
+            this.clearConfirmationState();
+            
+            if (Utils) Utils.showMessage('Item deleted successfully!', 'success');
+            
+        } catch (error) {
+            console.error('Error deleting item:', error);
+            confirmModal.style.display = 'none';
+            if (Utils) Utils.showMessage('Failed to delete item: ' + error.message, 'error');
+        }
+    });
+    
+    // Close on outside click
+    confirmModal.addEventListener('click', (e) => {
+        if (e.target === confirmModal) {
+            confirmModal.style.display = 'none';
+            this.clearConfirmationState();
+        }
+    });
+    
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && confirmModal.style.display === 'flex') {
+            confirmModal.style.display = 'none';
+            this.clearConfirmationState();
+        }
+    });
+},
+
+clearConfirmationState() {
+    window.pendingDeleteTourId = null;
+    window.pendingDeleteFromEditModal = false;
+    window.confirmLogoutCallback = null;
+    
+    // Restore delete button text if it was changed
+    const confirmDeleteBtn = document.getElementById('confirmDelete');
+    if (confirmDeleteBtn && !confirmDeleteBtn.innerHTML.includes('Delete')) {
+        confirmDeleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Delete';
     }
+},
 };
 
 window.UIModals = UIModals;

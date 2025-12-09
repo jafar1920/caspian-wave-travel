@@ -55,47 +55,59 @@ const UIHelpers = {
     
     // Get itinerary data from add form
     getItineraryData() {
-        const items = [];
-        const itineraryItems = document.querySelectorAll('#itineraryFields .itinerary-item');
+    const items = [];
+    const itineraryItems = document.querySelectorAll('#itineraryFields .itinerary-item');
+    
+    itineraryItems.forEach((item, index) => {
+        // Get day number from div.day-number instead of input.itinerary-day
+        const dayNumberDiv = item.querySelector('.day-number');
+        const title = item.querySelector('.itinerary-title').value;
+        const description = item.querySelector('.itinerary-desc').value;
         
-        itineraryItems.forEach(item => {
-            const day = item.querySelector('.itinerary-day').value;
-            const title = item.querySelector('.itinerary-title').value;
-            const description = item.querySelector('.itinerary-desc').value;
-            
-            if (day && title && description) {
-                items.push({
-                    day: parseInt(day),
-                    title: title.trim(),
-                    description: description.trim()
-                });
-            }
-        });
+        // Get day number from div or use index + 1 as fallback
+        const day = dayNumberDiv ? 
+            parseInt(dayNumberDiv.textContent) || (index + 1) : 
+            (index + 1);
         
-        return items;
-    },
+        if (title && description) {
+            items.push({
+                day: day,
+                title: title.trim(),
+                description: description.trim()
+            });
+        }
+    });
+    
+    return items;
+},
     
     // Get itinerary data from edit form
     getEditItineraryData() {
-        const items = [];
-        const itineraryItems = document.querySelectorAll('#editItineraryFields .itinerary-item');
+    const items = [];
+    const itineraryItems = document.querySelectorAll('#editItineraryFields .itinerary-item');
+    
+    itineraryItems.forEach((item, index) => {
+        // Get day number from div.day-number instead of input.itinerary-day
+        const dayNumberDiv = item.querySelector('.day-number');
+        const title = item.querySelector('.itinerary-title').value;
+        const description = item.querySelector('.itinerary-desc').value;
         
-        itineraryItems.forEach(item => {
-            const day = item.querySelector('.itinerary-day').value;
-            const title = item.querySelector('.itinerary-title').value;
-            const description = item.querySelector('.itinerary-desc').value;
-            
-            if (day && title && description) {
-                items.push({
-                    day: parseInt(day),
-                    title: title.trim(),
-                    description: description.trim()
-                });
-            }
-        });
+        // Get day number from div or use index + 1 as fallback
+        const day = dayNumberDiv ? 
+            parseInt(dayNumberDiv.textContent) || (index + 1) : 
+            (index + 1);
         
-        return items;
-    },
+        if (title && description) {
+            items.push({
+                day: day,
+                title: title.trim(),
+                description: description.trim()
+            });
+        }
+    });
+    
+    return items;
+},
     
     // Get pricing data from add form
     getPricingData() {

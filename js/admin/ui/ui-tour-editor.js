@@ -56,6 +56,33 @@ const UITourEditor = {
         document.getElementById('editModal').style.display = 'flex';
     },
     
+    // Helper function to create edit itinerary items
+    createEditItineraryItem(dayNumber, title = '', description = '') {
+    const item = document.createElement('div');
+    item.className = 'itinerary-item';
+    item.innerHTML = `
+        <div class="day-number">${dayNumber}</div>
+        <div class="itinerary-content">
+            <input type="text" placeholder="Title" class="itinerary-title" value="${title}">
+            <textarea placeholder="Description" class="itinerary-desc" rows="2">${description}</textarea>
+        </div>
+        <button type="button" class="remove-itinerary-btn" title="Remove this day">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    // Add remove button event
+    const removeBtn = item.querySelector('.remove-itinerary-btn');
+    if (removeBtn) {
+        removeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.removeEditItineraryItem(item);
+        });
+    }
+    
+    return item;
+},
+    
     populateEditItinerary(itinerary) {
         const container = document.getElementById('editItineraryFields');
         if (!container) return;
@@ -63,117 +90,164 @@ const UITourEditor = {
         container.innerHTML = '';
         
         if (itinerary.length === 0) {
-            const emptyField = document.createElement('div');
-            emptyField.className = 'itinerary-item';
-            emptyField.innerHTML = `
-                <div class="field-header">
-                    <span>Itinerary 1</span>
-                    <button type="button" class="btn-remove-itinerary" title="Remove itinerary">&times;</button>
-                </div>
-                <input type="number" placeholder="Order" class="itinerary-day" min="1" value="1">
-                <input type="text" placeholder="Title" class="itinerary-title">
-                <textarea placeholder="Description" class="itinerary-desc" rows="2"></textarea>
-            `;
-            container.appendChild(emptyField);
+            // Create one empty item
+            const emptyItem = this.createEditItineraryItem(1);
+            container.appendChild(emptyItem);
         } else {
+            // Create items from itinerary data
             itinerary.forEach((item, index) => {
-                const newField = document.createElement('div');
-                newField.className = 'itinerary-item';
-                newField.innerHTML = `
-                    <div class="field-header">
-                        <span>Itinerary ${index + 1}</span>
-                        <button type="button" class="btn-remove-itinerary" title="Remove itinerary">&times;</button>
-                    </div>
-                    <input type="number" placeholder="Order" class="itinerary-day" min="1" value="${item.day || index + 1}">
-                    <input type="text" placeholder="Title" class="itinerary-title" value="${item.title || ''}">
-                    <textarea placeholder="Description" class="itinerary-desc" rows="2">${item.description || ''}</textarea>
-                `;
-                container.appendChild(newField);
+                const dayNumber = index + 1;
+                const newItem = this.createEditItineraryItem(
+                    dayNumber,
+                    item.title || '',
+                    item.description || ''
+                );
+                container.appendChild(newItem);
             });
         }
+    },
+    
+    removeEditItineraryItem(item) {
+    const container = document.getElementById('editItineraryFields');
+    if (!container) return;
+    
+    const items = container.querySelectorAll('.itinerary-item');
+    
+    // Always allow removal if there's more than one item
+    if (items.length > 1) {
+        item.remove();
+        // Re-number all remaining items
+        this.updateEditItineraryNumbers();
+    } else {
+        // If only one item left, just clear its content
+        this.clearEditItineraryItem(item);
+        if (Utils) Utils.showMessage('Cleared itinerary content. At least one itinerary is required.', 'info');
+    }
+},
+
+// Helper function to create edit pricing items
+createEditPricingItem(description = '', persons = '', price = '') {
+    const item = document.createElement('div');
+    item.className = 'pricing-item';
+    item.innerHTML = `
+        <input type="text" placeholder="Description" class="pricing-desc" value="${description}">
+        <input type="text" placeholder="Persons" class="pricing-persons" value="${persons}">
+        <input type="text" placeholder="Price" class="pricing-price" value="${price}">
+        <button type="button" class="remove-pricing-btn" title="Remove price">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    // Add remove button event
+    const removeBtn = item.querySelector('.remove-pricing-btn');
+    if (removeBtn) {
+        removeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.removeEditPricingItem(item);
+        });
+    }
+    
+    return item;
+},
+
+addEditPricingField() {
+    const container = document.getElementById('editPricingFields');
+    if (!container) return;
+    
+    const newItem = this.createEditPricingItem();
+    container.appendChild(newItem);
+},
+
+removeEditPricingItem(item) {
+    const container = document.getElementById('editPricingFields');
+    if (!container) return;
+    
+    const items = container.querySelectorAll('.pricing-item');
+    
+    // Always allow removal if there's more than one item
+    if (items.length > 1) {
+        item.remove();
+    } else {
+        // If only one item left, just clear its content
+        this.clearEditPricingItem(item);
+        if (Utils) Utils.showMessage('Cleared price fields. At least one price option is required.', 'info');
+    }
+},
+
+clearEditPricingItem(item) {
+    const descInput = item.querySelector('.pricing-desc');
+    const personsInput = item.querySelector('.pricing-persons');
+    const priceInput = item.querySelector('.pricing-price');
+    
+    if (descInput) descInput.value = '';
+    if (personsInput) personsInput.value = '';
+    if (priceInput) priceInput.value = '';
+},
+
+// Add this helper function
+    clearEditItineraryItem(item) {
+    const titleInput = item.querySelector('.itinerary-title');
+    const descTextarea = item.querySelector('.itinerary-desc');
+    
+    if (titleInput) titleInput.value = '';
+    if (descTextarea) descTextarea.value = '';
     },
     
     populateEditPricing(pricing) {
-        const container = document.getElementById('editPricingFields');
-        if (!container) return;
-        
-        container.innerHTML = '';
-        
-        if (pricing.length === 0) {
-            const emptyField = document.createElement('div');
-            emptyField.className = 'pricing-item';
-            emptyField.innerHTML = `
-                <div class="field-header">
-                    <span>Price Option 1</span>
-                    <button type="button" class="btn-remove-pricing" title="Remove price">&times;</button>
-                </div>
-                <input type="text" placeholder="Description" class="pricing-desc">
-                <input type="text" placeholder="Persons" class="pricing-persons">
-                <input type="text" placeholder="Price" class="pricing-price">
-            `;
-            container.appendChild(emptyField);
-        } else {
-            pricing.forEach((item, index) => {
-                const newField = document.createElement('div');
-                newField.className = 'pricing-item';
-                newField.innerHTML = `
-                    <div class="field-header">
-                        <span>Price Option ${index + 1}</span>
-                        <button type="button" class="btn-remove-pricing" title="Remove price">&times;</button>
-                    </div>
-                    <input type="text" placeholder="Description" class="pricing-desc" value="${item.description || ''}">
-                    <input type="text" placeholder="Persons" class="pricing-persons" value="${item.persons || ''}">
-                    <input type="text" placeholder="Price" class="pricing-price" value="${item.price || ''}">
-                `;
-                container.appendChild(newField);
-            });
-        }
-    },
+    const container = document.getElementById('editPricingFields');
+    if (!container) return;
     
-    setupEditModalButtons(tourId) {
-        // Add itinerary button in edit modal
-        const editAddItineraryBtn = document.getElementById('editAddItineraryBtn');
-        if (editAddItineraryBtn) {
-            editAddItineraryBtn.onclick = () => this.addEditItineraryField();
-        }
-        
-        // Add pricing button in edit modal
-        const editAddPricingBtn = document.getElementById('editAddPricingBtn');
-        if (editAddPricingBtn) {
-            editAddPricingBtn.onclick = () => this.addEditPricingField();
-        }
-        
-        // Delete button
-        const editDeleteBtn = document.getElementById('editDeleteBtn');
-        if (editDeleteBtn) {
-            editDeleteBtn.onclick = () => {
-                if (Tours) Tours.deleteTour(tourId, true);
-            };
-        }
-        
-        // Setup remove buttons
-        this.setupRemoveButtons();
-    },
+    container.innerHTML = '';
+    
+    if (pricing.length === 0) {
+        // Create one empty item
+        const emptyItem = this.createEditPricingItem();
+        container.appendChild(emptyItem);
+    } else {
+        // Create items from pricing data
+        pricing.forEach(item => {
+            const newItem = this.createEditPricingItem(
+                item.description || '',
+                item.persons || '',
+                item.price || ''
+            );
+            container.appendChild(newItem);
+        });
+    }
+},
+    
+  setupEditModalButtons(tourId) {
+    // Add itinerary button in edit modal
+    const editAddItineraryBtn = document.getElementById('editAddItineraryBtn');
+    if (editAddItineraryBtn) {
+        editAddItineraryBtn.onclick = () => this.addEditItineraryField();
+    }
+    
+    // Add pricing button in edit modal - update to use new function
+    const editAddPricingBtn = document.getElementById('editAddPricingBtn');
+    if (editAddPricingBtn) {
+        editAddPricingBtn.onclick = () => this.addEditPricingField(); // Use new function
+    }
+    
+    // Delete button
+    const editDeleteBtn = document.getElementById('editDeleteBtn');
+    if (editDeleteBtn) {
+        editDeleteBtn.onclick = () => {
+            if (Tours) Tours.deleteTour(tourId, true);
+        };
+    }
+},
     
     addEditItineraryField() {
         const container = document.getElementById('editItineraryFields');
         if (!container) return;
         
         const count = container.querySelectorAll('.itinerary-item').length + 1;
+        const newItem = this.createEditItineraryItem(count);
+        container.appendChild(newItem);
         
-        const newField = document.createElement('div');
-        newField.className = 'itinerary-item';
-        newField.innerHTML = `
-            <div class="field-header">
-                <span>Itinerary ${count}</span>
-                <button type="button" class="btn-remove-itinerary" title="Remove itinerary">&times;</button>
-            </div>
-            <input type="number" placeholder="Order" class="itinerary-day" min="1" value="${count}">
-            <input type="text" placeholder="Title" class="itinerary-title">
-            <textarea placeholder="Description" class="itinerary-desc" rows="2"></textarea>
-        `;
-        container.appendChild(newField);
-        this.setupRemoveButtons();
+        // Update all numbers
+        this.updateEditItineraryNumbers();
     },
     
     addEditPricingField() {
@@ -194,35 +268,20 @@ const UITourEditor = {
             <input type="text" placeholder="Price" class="pricing-price">
         `;
         container.appendChild(newField);
-        this.setupRemoveButtons();
     },
     
-    setupRemoveButtons() {
-        // Remove itinerary buttons
-        document.querySelectorAll('.btn-remove-itinerary').forEach(btn => {
-            btn.onclick = function() {
-                const parent = this.closest('.itinerary-item').parentElement;
-                if (parent.querySelectorAll('.itinerary-item').length > 1) {
-                    this.closest('.itinerary-item').remove();
-                    const container = document.getElementById('editItineraryFields');
-                    if (container) {
-                        container.querySelectorAll('.itinerary-item').forEach((item, index) => {
-                            const header = item.querySelector('.field-header span');
-                            if (header) header.textContent = `Itinerary ${index + 1}`;
-                        });
-                    }
-                }
-            };
-        });
+    updateEditItineraryNumbers() {
+        const container = document.getElementById('editItineraryFields');
+        if (!container) return;
         
-        // Remove pricing buttons
-        document.querySelectorAll('.btn-remove-pricing').forEach(btn => {
-            btn.onclick = function() {
-                const parent = this.closest('.pricing-item').parentElement;
-                if (parent.querySelectorAll('.pricing-item').length > 1) {
-                    this.closest('.pricing-item').remove();
-                }
-            };
+        const items = container.querySelectorAll('.itinerary-item');
+        
+        items.forEach((item, index) => {
+            const dayNumber = index + 1;
+            const dayNumberDiv = item.querySelector('.day-number');
+            if (dayNumberDiv) {
+                dayNumberDiv.textContent = dayNumber;
+            }
         });
     }
 };

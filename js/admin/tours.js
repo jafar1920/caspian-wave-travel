@@ -123,66 +123,74 @@ const Tours = {
             }
         }
     },
-    
+
     async uploadImagesForAddForm(tourId) {
-        if (!window.selectedFiles || !window.selectedFiles.add || window.selectedFiles.add.length === 0) {
-            return [];
+    if (!window.selectedFiles || !window.selectedFiles.add || window.selectedFiles.add.length === 0) {
+        return [];
+    }
+    
+    const files = window.selectedFiles.add;
+    const progressBar = document.getElementById('uploadProgress');
+    
+    try {
+        // Show progress
+        if (progressBar) {
+            progressBar.style.display = 'block';
+            const progressFill = progressBar.querySelector('.progress-fill');
+            const progressText = progressBar.querySelector('.progress-text');
+            
+            progressFill.style.width = '0%';
+            progressText.textContent = `Uploading 0/${files.length} images...`;
         }
         
-        const files = window.selectedFiles.add;
-        const progressBar = document.getElementById('uploadProgress');
+        // UPLOAD ALL IMAGES IN PARALLEL (FASTER!)
+        const uploadPromises = files.map((file, index) => 
+            ImageUpload.uploadImage(file, tourId).catch(error => {
+                console.error(`Error uploading image ${file.name}:`, error);
+                Utils.showMessage(`Failed to upload ${file.name}`, 'error');
+                return null; // Return null for failed uploads
+            })
+        );
         
-        try {
-            // Show progress
-            if (progressBar) {
-                progressBar.style.display = 'block';
-                const progressFill = progressBar.querySelector('.progress-fill');
-                const progressText = progressBar.querySelector('.progress-text');
-                
-                // Update progress
-                progressFill.style.width = '0%';
-                progressText.textContent = `Uploading 0/${files.length} images...`;
-            }
-            
-            // Upload images
-            const uploadedUrls = [];
-            
-            for (let i = 0; i < files.length; i++) {
-                try {
-                    const url = await ImageUpload.uploadImage(files[i], tourId);
-                    uploadedUrls.push(url);
-                    
-                    // Update progress
-                    if (progressBar) {
-                        const progressFill = progressBar.querySelector('.progress-fill');
-                        const progressText = progressBar.querySelector('.progress-text');
-                        const percent = ((i + 1) / files.length) * 100;
-                        progressFill.style.width = `${percent}%`;
-                        progressText.textContent = `Uploading ${i + 1}/${files.length} images...`;
-                    }
-                } catch (error) {
-                    console.error(`Error uploading image ${files[i].name}:`, error);
-                    Utils.showMessage(`Failed to upload ${files[i].name}`, 'error');
+        // Track progress
+        let completed = 0;
+        uploadPromises.forEach(promise => {
+            promise.then(() => {
+                completed++;
+                if (progressBar) {
+                    const progressFill = progressBar.querySelector('.progress-fill');
+                    const progressText = progressBar.querySelector('.progress-text');
+                    const percent = (completed / files.length) * 100;
+                    progressFill.style.width = `${percent}%`;
+                    progressText.textContent = `Uploading ${completed}/${files.length} images...`;
                 }
-            }
-            
-            // Hide progress
-            if (progressBar) {
-                setTimeout(() => {
-                    progressBar.style.display = 'none';
-                }, 1000);
-            }
-            
-            return uploadedUrls;
-            
-        } catch (error) {
-            console.error('Error uploading images:', error);
-            if (progressBar) {
+            });
+        });
+        
+        // Wait for all uploads (parallel)
+        const results = await Promise.all(uploadPromises);
+        
+        // Filter out failed uploads (null values)
+        const uploadedUrls = results.filter(url => url !== null);
+        
+        // Hide progress
+        if (progressBar) {
+            setTimeout(() => {
                 progressBar.style.display = 'none';
-            }
-            throw error;
+            }, 1000);
         }
-    },
+        
+        return uploadedUrls;
+        
+    } catch (error) {
+        console.error('Error uploading images:', error);
+        if (progressBar) {
+            progressBar.style.display = 'none';
+        }
+        throw error;
+    }
+},
+    
     
     async updateTour() {
         const submitBtn = document.querySelector('#editTourForm button[type="submit"]');
