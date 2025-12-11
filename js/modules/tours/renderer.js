@@ -29,6 +29,17 @@ class TourRenderer {
             </div>
         `).join('');
 
+        let tourOrPackage = "Tour";
+
+
+        if(tour.type.toLowerCase() === "package"){
+
+                tourOrPackage = "Package";
+
+        }
+
+       
+
         // Itinerary will be added separately by the main manager
         return `
             <div class="tour-content">
@@ -51,7 +62,7 @@ class TourRenderer {
                     </div>
                 </div>
                 <div class="pricing-card">
-                    <h3>Book This ${tour.title.includes('Package') ? 'Package' : 'Tour'}</h3>
+                  <h3>Book This ${tourOrPackage}</h3>
                     ${pricingOptions}
                     <button class="book-now-btn" onclick="window.location.href='https://wa.me/994775700711?text=${encodeURIComponent(tour.whatsappMessage)}'">
                         <i class="fab fa-whatsapp"></i> Book on WhatsApp
