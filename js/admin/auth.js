@@ -1,13 +1,7 @@
-// Authentication
+// Authentication with Firebase
 const Auth = {
     init() {
-        console.log('Auth initialized');
-        
-        // Check if already logged in
-        if (localStorage.getItem('adminLoggedIn') === 'true') {
-            this.showAdminPanel();
-            return;
-        }
+        console.log('🔐 Auth module initialized');
         
         // Setup login button
         const loginBtn = document.getElementById('loginBtn');
@@ -24,24 +18,69 @@ const Auth = {
         }
     },
     
-    login() {
-        const username = document.getElementById('username').value;
+    async login() {
+        const email = document.getElementById('username').value;
         const password = document.getElementById('password').value;
         const errorEl = document.getElementById('loginError');
         
-        // Simple hardcoded login
-        if (username === 'admin' && password === '1234') {
-            localStorage.setItem('adminLoggedIn', 'true');
-            this.showAdminPanel();
+        // Clear previous errors
+        errorEl.textContent = '';
+        
+        // Basic validation
+        if (!email || !password) {
+            errorEl.textContent = 'Please enter both email and password';
+            return;
+        }
+        
+        // Show loading state
+        const loginBtn = document.getElementById('loginBtn');
+        const originalText = loginBtn.innerHTML;
+        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+        loginBtn.disabled = true;
+        
+        try {
+            console.log('🔐 Attempting login with:', email);
             
-            if (Utils) Utils.showMessage('Login successful', 'success');
-        } else {
-            errorEl.textContent = 'Invalid credentials. Use: admin / 1234';
+            // Direct Firebase auth call - should work since we initialized globally
+            await firebase.auth().signInWithEmailAndPassword(email, password);
+            
+            console.log('✅ Login successful!');
+            // Auth state listener will handle the rest
+            
+        } catch (error) {
+            console.error('❌ Login error:', error);
+            
+            let errorMessage = 'Login failed. Please try again.';
+            
+            if (error.code) {
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                    case 'auth/wrong-password':
+                        errorMessage = 'Invalid email or password';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Invalid email address format';
+                        break;
+                    case 'auth/user-disabled':
+                        errorMessage = 'This account has been disabled';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = 'Too many attempts. Try again later';
+                        break;
+                    default:
+                        errorMessage = `Error: ${error.code}`;
+                }
+            }
+            
+            errorEl.textContent = errorMessage;
+            
+            // Restore button
+            loginBtn.innerHTML = originalText;
+            loginBtn.disabled = false;
         }
     },
     
     logout() {
-        // Use the existing confirmation modal
         this.showLogoutConfirmation();
     },
     
@@ -67,56 +106,15 @@ const Auth = {
         document.getElementById('confirmModal').style.display = 'flex';
     },
     
-    performLogout() {
-        localStorage.removeItem('adminLoggedIn');
-        
-        // Hide admin panel
-        document.getElementById('adminPanel').style.display = 'none';
-        
-        // Show login screen
-        const loginScreen = document.getElementById('loginScreen');
-        if (loginScreen) {
-            loginScreen.style.display = 'flex';
-            
-            // Clear login form
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            document.getElementById('loginError').textContent = '';
+    async performLogout() {
+        try {
+            console.log('👋 Logging out...');
+            await firebase.auth().signOut();
+            console.log('✅ Logout successful');
+        } catch (error) {
+            console.error('❌ Logout error:', error);
+            if (Utils) Utils.showMessage('Logout failed: ' + error.message, 'error');
         }
-        
-        // Clear any pending data
-        if (window.currentEditingTourId) {
-            window.currentEditingTourId = null;
-            window.currentTourImages = null;
-            window.pendingImageDeletions = [];
-            window.newImagesToUpload = [];
-        }
-        
-        // Clear selected files
-        if (window.selectedFiles) {
-            window.selectedFiles.add = [];
-            window.selectedFiles.edit = [];
-        }
-        
-        // Cleanup object URLs
-        if (UICore && UICore.cleanupObjectURLs) {
-            UICore.cleanupObjectURLs();
-        }
-        
-        // Show logout message
-        if (Utils) Utils.showMessage('Logged out successfully', 'info');
-        
-        console.log('✅ User logged out');
-    },
-    
-    showAdminPanel() {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('adminPanel').style.display = 'block';
-        
-        // Initialize other modules
-        if (FirebaseAdmin) FirebaseAdmin.init();
-        if (UICore) UICore.init();
-        if (Dashboard) Dashboard.init();
     }
 };
 
