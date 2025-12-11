@@ -51,22 +51,69 @@
 </footer>
 
 <script>
-// Simple script to initialize FooterLoader
+// Improved Footer Initialization with proper waiting
 (function() {
     console.log('🎯 FOOTER COMPONENT INITIALIZED');
     
-    // Wait for everything to load
-    window.addEventListener('load', function() {
-        if (!window.FooterLoader) {
-            console.error('FooterLoader not available');
+    let retryCount = 0;
+    const MAX_RETRIES = 10; // Increased retries
+    const RETRY_DELAY = 500; // 500ms between retries
+    
+    function tryLoadFooter() {
+        console.log(`🔄 Footer loading attempt ${retryCount + 1}/${MAX_RETRIES}`);
+        
+        // Check if ALL required components are available
+        if (!window.DataLoader || 
+            !window.DataLoader.loadTours || 
+            !window.DataLoader.loadPackages ||
+            !window.FooterLoader || 
+            !window.FooterLoader.load) {
+            
+            console.log('⏳ Waiting for dependencies...', {
+                DataLoader: !!window.DataLoader,
+                DataLoaderMethods: window.DataLoader ? 
+                    {loadTours: !!window.DataLoader.loadTours, loadPackages: !!window.DataLoader.loadPackages} : 'none',
+                FooterLoader: !!window.FooterLoader
+            });
+            
+            if (retryCount < MAX_RETRIES) {
+                retryCount++;
+                setTimeout(tryLoadFooter, RETRY_DELAY);
+                return;
+            }
+            
+            // After max retries, show loading message
+            console.error('❌ Dependencies not available after max retries');
+            showLoadingMessage();
             return;
         }
         
-        // Load footer content with a small delay
-        setTimeout(() => {
-            window.FooterLoader.load();
-        }, 500);
-    });
+        // Everything is ready, load footer content
+        console.log('✅ All dependencies ready, loading footer...');
+        window.FooterLoader.load().catch(error => {
+            console.error('❌ FooterLoader failed:', error);
+            showLoadingMessage();
+        });
+    }
+    
+    function showLoadingMessage() {
+        const toursContainer = document.getElementById('popular-tours-list');
+        const packagesContainer = document.getElementById('packages-list');
+        
+        // Just show "Loading..." message - NO HARCODED CONTENT
+        if (toursContainer) {
+            toursContainer.innerHTML = '<li><span class="loading-text">Loading tours...</span></li>';
+        }
+        
+        if (packagesContainer) {
+            packagesContainer.innerHTML = '<li><span class="loading-text">Loading packages...</span></li>';
+        }
+    }
+    
+    // Start loading footer
+    // Give other scripts time to load first
+    setTimeout(tryLoadFooter, 1000);
+    
 })();
 </script>
 
@@ -77,3 +124,4 @@
     font-size: 14px;
 }
 </style>
+

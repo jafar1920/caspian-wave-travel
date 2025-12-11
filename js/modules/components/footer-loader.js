@@ -1,4 +1,4 @@
-// js/modules/components/footer-loader.js
+// js/modules/components/footer-loader.js - UPDATED VERSION
 console.log('=== FOOTER LOADER COMPONENT LOADED ===');
 
 const FooterLoader = {
@@ -10,16 +10,19 @@ const FooterLoader = {
         console.log('🎯 Loading dynamic footer content');
         
         try {
-            // Load tours and packages for footer sections
+            // Verify DataLoader is ready
+            if (!window.DataLoader || !window.DataLoader.loadTours) {
+                throw new Error('DataLoader not available');
+            }
+            
+            // Load tours and packages
             const [tours, packages] = await Promise.all([
-                window.DataLoader.loadTours(5),  // First 5 tours
-                window.DataLoader.loadPackages(3) // First 3 packages
+                window.DataLoader.loadTours(5),
+                window.DataLoader.loadPackages(3)
             ]);
             
-            // Update Popular Day Tours section
+            // Update sections
             this.updatePopularTours(tours);
-            
-            // Update Multi-Day Packages section
             this.updatePackages(packages);
             
             console.log('✅ Footer content loaded');
@@ -27,7 +30,9 @@ const FooterLoader = {
             
         } catch (error) {
             console.error('❌ Error loading footer content:', error);
-            this.showFallbackContent();
+            
+            // Show error message instead of hardcoded content
+            this.showErrorMessage();
             return false;
         }
     },
@@ -105,27 +110,37 @@ const FooterLoader = {
             `;
         });
         
-        // Add Hotels link (static, since it's not a package in Firebase)
-       
-        
         container.innerHTML = html;
     },
     
     /**
-     * Show fallback content if loading fails
+     * Show error message (NO HARCODED CONTENT)
      */
-   showFallbackContent() {
-    const packagesContainer = document.getElementById('packages-list');
-    if (packagesContainer) {
-        packagesContainer.innerHTML = `
-            <li>
-                <span class="error-text">
-                    Unable to load packages. Please check your connection.
-                </span>
-            </li>
-        `;
+    showErrorMessage() {
+        const toursContainer = document.getElementById('popular-tours-list');
+        const packagesContainer = document.getElementById('packages-list');
+        
+        // Just show error messages - NO HARCODED CONTENT
+        if (toursContainer) {
+            toursContainer.innerHTML = `
+                <li>
+                    <span class="error-text">
+                        Unable to load tours
+                    </span>
+                </li>
+            `;
+        }
+        
+        if (packagesContainer) {
+            packagesContainer.innerHTML = `
+                <li>
+                    <span class="error-text">
+                        Unable to load packages
+                    </span>
+                </li>
+            `;
+        }
     }
-}
 };
 
 // Make available globally
