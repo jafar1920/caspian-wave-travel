@@ -13,7 +13,16 @@ caspian-wave-travel
 │  ├─ services.html
 │  └─ whatsapp-button.html
 ├─ css
-│  ├─ admin.css
+│  ├─ admin
+│  │  ├─ base.css
+│  │  ├─ confirmation.css
+│  │  ├─ forms.css
+│  │  ├─ images.css
+│  │  ├─ layout.css
+│  │  ├─ login.css
+│  │  ├─ main.css
+│  │  ├─ modal.css
+│  │  └─ tours.css
 │  ├─ animations.css
 │  ├─ base
 │  │  ├─ reset.css
@@ -39,10 +48,18 @@ caspian-wave-travel
 │  │  ├─ auth.js
 │  │  ├─ dashboard.js
 │  │  ├─ firebase.js
+│  │  ├─ image-upload.js
+│  │  ├─ init.js
 │  │  ├─ tours.js
-│  │  ├─ ui.js
+│  │  ├─ ui
+│  │  │  ├─ ui-core.js
+│  │  │  ├─ ui-forms.js
+│  │  │  ├─ ui-helpers.js
+│  │  │  ├─ ui-images.js
+│  │  │  ├─ ui-modals.js
+│  │  │  ├─ ui-tabs.js
+│  │  │  └─ ui-tour-editor.js
 │  │  └─ utils.js
-│  ├─ admin.js
 │  ├─ carousel.js
 │  ├─ components-loader.js
 │  ├─ core
@@ -52,25 +69,32 @@ caspian-wave-travel
 │  ├─ hash-scroll-handler.js
 │  ├─ modules
 │  │  ├─ components
+│  │  │  ├─ footer-loader.js
 │  │  │  ├─ loader-core.js
 │  │  │  ├─ navbar-manager.js
 │  │  │  ├─ navigation-fixer.js
-│  │  │  └─ page-initializer.js
-│  │  └─ tours
-│  │     ├─ data.js
-│  │     ├─ image-handler
-│  │     │  ├─ core.js
-│  │     │  ├─ dom-manager.js
-│  │     │  ├─ events.js
-│  │     │  ├─ gallery.js
-│  │     │  └─ keyboard.js
-│  │     ├─ itinerary.js
-│  │     ├─ manager.js
-│  │     └─ renderer.js
+│  │  │  ├─ packages-loader.js
+│  │  │  ├─ page-initializer.js
+│  │  │  └─ tours-loader.js
+│  │  ├─ data
+│  │  │  └─ data-loader.js
+│  │  ├─ tours
+│  │  │  ├─ data.js
+│  │  │  ├─ image-handler
+│  │  │  │  ├─ core.js
+│  │  │  │  ├─ dom-manager.js
+│  │  │  │  ├─ events.js
+│  │  │  │  ├─ gallery.js
+│  │  │  │  └─ keyboard.js
+│  │  │  ├─ itinerary.js
+│  │  │  ├─ manager.js
+│  │  │  └─ renderer.js
+│  │  └─ utils
+│  │     ├─ dom-helpers.js
+│  │     ├─ formatters.js
+│  │     └─ validators.js
 │  ├─ pages
 │  │  └─ tour-details.js
-│  ├─ tour-details
-│  │  └─ tour-data.js
 │  └─ tour-details.js
 └─ tour-details.html
 
