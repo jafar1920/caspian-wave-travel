@@ -1,4 +1,4 @@
-/* css/tour-details.css - UPDATED WITH SHOW MORE/LESS ITINERARY */
+/* css/tour-details.css - UPDATED WITH FIXED GALLERY LAYOUT */
 .tour-details-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -556,7 +556,7 @@
     }
 }
 
-/* ===== GALLERY MODAL ===== */
+/* ===== GALLERY MODAL - FIXED LAYOUT ===== */
 .gallery-modal {
     position: fixed;
     top: 0;
@@ -595,6 +595,7 @@
     align-items: center;
     border-bottom: 1px solid #333;
     flex-shrink: 0;
+    height: 80px; /* Fixed header height */
 }
 
 .gallery-info {
@@ -639,15 +640,18 @@
     transform: rotate(90deg);
 }
 
-/* Full Screen View */
+/* Full Screen View - DYNAMIC HEIGHT */
 .gallery-full-view {
-    flex: 1;
+    flex: 1 1 auto; /* Can grow and shrink */
+    min-height: 50vh; /* Minimum 50% of viewport */
+    max-height: 70vh; /* Maximum 70% of viewport */
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 30px;
+    padding: 20px;
     position: relative;
     background: #000;
+    overflow: hidden;
 }
 
 .lightbox-nav {
@@ -676,25 +680,26 @@
 }
 
 .lightbox-nav.prev {
-    left: 30px;
+    left: 20px;
 }
 
 .lightbox-nav.next {
-    right: 30px;
+    right: 20px;
 }
 
 .lightbox-image-container {
     position: relative;
-    max-width: 90%;
-    max-height: 90%;
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 10px;
 }
 
 #lightbox-image {
     max-width: 100%;
-    max-height: 70vh;
+    max-height: 100%;
     object-fit: contain;
     border-radius: 10px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
@@ -709,18 +714,19 @@
 
 .image-info {
     position: absolute;
-    bottom: -50px;
-    left: 0;
-    right: 0;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 20px;
     color: white;
-    padding: 15px;
+    padding: 10px 20px;
     background: rgba(0, 0, 0, 0.7);
     border-radius: 10px;
     backdrop-filter: blur(10px);
+    z-index: 5;
 }
 
 #image-number {
@@ -745,17 +751,21 @@
     transform: scale(1.1);
 }
 
-/* Thumbnail Grid */
+/* Thumbnail Grid - GUARANTEED VISIBILITY */
 .gallery-thumbnails {
-    padding: 20px 30px;
+    padding: 15px 30px;
     background: #111;
     border-top: 1px solid #333;
     display: flex;
-    gap: 15px;
+    gap: 12px;
     overflow-x: auto;
     flex-shrink: 0;
     scrollbar-width: thin;
     scrollbar-color: #0095da #222;
+    /* Dynamic height - ALWAYS VISIBLE */
+    flex: 0 0 auto; /* Don't grow or shrink */
+    min-height: 120px; /* Always at least 120px tall */
+    max-height: 180px; /* Never more than 180px tall */
 }
 
 .gallery-thumbnails::-webkit-scrollbar {
@@ -773,8 +783,8 @@
 }
 
 .thumbnail {
-    width: 100px;
-    height: 80px;
+    width: 120px;
+    height: 90px;
     border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
@@ -810,6 +820,7 @@
     
     .gallery-header {
         padding: 15px 20px;
+        height: 70px;
     }
     
     .gallery-header h3 {
@@ -817,6 +828,8 @@
     }
     
     .gallery-full-view {
+        min-height: 40vh;
+        max-height: 60vh;
         padding: 15px;
     }
     
@@ -835,17 +848,52 @@
     }
     
     .image-info {
-        bottom: -40px;
+        bottom: 10px;
+        padding: 8px 16px;
+    }
+    
+    .gallery-thumbnails {
+        padding: 12px 20px;
+        min-height: 100px;
+        max-height: 150px;
+    }
+    
+    .thumbnail {
+        width: 100px;
+        height: 75px;
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery-header {
+        height: 60px;
+        padding: 12px 15px;
+    }
+    
+    .gallery-header h3 {
+        font-size: 1.2rem;
+    }
+    
+    .gallery-full-view {
+        min-height: 35vh;
+        max-height: 55vh;
         padding: 10px;
     }
     
     .gallery-thumbnails {
-        padding: 15px 20px;
+        min-height: 80px;
+        max-height: 120px;
+        padding: 10px 15px;
     }
     
     .thumbnail {
         width: 80px;
         height: 60px;
+    }
+    
+    .gallery-counter {
+        font-size: 0.9rem;
+        padding: 4px 10px;
     }
 }
 
