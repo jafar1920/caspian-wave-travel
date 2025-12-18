@@ -19,7 +19,7 @@ header::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('https://firebasestorage.googleapis.com/v0/b/caspianwavetravel-b9aa4.firebasestorage.app/o/center.jpg?alt=media&token=a7e54401-d351-4b6c-8178-02cf88ecc34e') no-repeat center center/cover;
+    background: url('https://firebasestorage.googleapis.com/v0/b/caspianwavetravel-b9aa4.firebasestorage.app/o/center.webp?alt=media&token=930632d3-e3c1-49f7-a215-16bd0fe3add9') no-repeat center center/cover;
     filter: blur(5px) brightness(0.8);
     transform: scale(1.02);
     opacity: 0;
