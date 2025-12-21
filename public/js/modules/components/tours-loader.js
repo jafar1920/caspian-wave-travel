@@ -1,5 +1,5 @@
 // js/modules/components/tours-loader.js
-console.log('=== TOURS LOADER COMPONENT LOADED ===');
+
 
 const ToursLoader = {
     /**
@@ -9,7 +9,7 @@ const ToursLoader = {
      * @returns {Promise<boolean>} Success status
      */
     async load(containerId, options = {}) {
-        console.log(`🎯 Loading tours into #${containerId}`);
+        
         
         const container = document.getElementById(containerId);
         if (!container) {
@@ -35,7 +35,7 @@ const ToursLoader = {
             
             // Render tours
             this.renderTours(container, tours);
-            console.log(`✅ Rendered ${tours.length} tours in #${containerId}`);
+           
             return true;
             
         } catch (error) {
@@ -120,4 +120,3 @@ const ToursLoader = {
 
 // Make available globally
 window.ToursLoader = ToursLoader;
-console.log('✅ Tours Loader ready');

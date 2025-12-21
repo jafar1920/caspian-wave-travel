@@ -1,5 +1,5 @@
 // js/modules/components/footer-loader.js - UPDATED VERSION
-console.log('=== FOOTER LOADER COMPONENT LOADED ===');
+
 
 const FooterLoader = {
     /**
@@ -7,7 +7,7 @@ const FooterLoader = {
      * @returns {Promise<boolean>} Success status
      */
     async load() {
-        console.log('🎯 Loading dynamic footer content');
+        
         
         try {
             // Verify DataLoader is ready
@@ -25,7 +25,7 @@ const FooterLoader = {
             this.updatePopularTours(tours);
             this.updatePackages(packages);
             
-            console.log('✅ Footer content loaded');
+            
             return true;
             
         } catch (error) {
@@ -145,4 +145,3 @@ const FooterLoader = {
 
 // Make available globally
 window.FooterLoader = FooterLoader;
-console.log('✅ Footer Loader ready');

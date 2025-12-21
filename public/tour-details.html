@@ -149,21 +149,18 @@
     <script>
         // Debug helper for testing
         window.debugImageHandler = function() {
-            console.log('🔍 DEBUG ImageHandler Status:');
-            console.log('ImageHandler class:', window.ImageHandler ? '✅ Loaded' : '❌ Not loaded');
-            console.log('ImageHandler instance:', window._imageHandlerInstance || 'No instance');
-            console.log('window.imageHandler:', window.imageHandler || 'Not set');
+           
+           
+            
             
             // Check DOM elements
-            console.log('Main image element:', document.getElementById('main-image'));
-            console.log('Side image 1:', document.getElementById('side-image-1'));
-            console.log('Side image 2:', document.getElementById('side-image-2'));
-            console.log('View All button:', document.getElementById('view-all-button'));
+           
+            
         };
         
         // Test clicks manually
         window.testClicks = function() {
-            console.log('🖱️ Testing click handlers...');
+            
             
             const mainImage = document.getElementById('main-image');
             const side1 = document.getElementById('side-image-1');
@@ -171,15 +168,15 @@
             const viewAll = document.getElementById('view-all-button');
             
             if (mainImage && mainImage.onclick) {
-                console.log('✅ Main image has onclick handler');
+               
             } else {
-                console.log('❌ Main image has NO onclick handler');
+                
             }
             
             // Simulate clicks
             if (mainImage) {
                 mainImage.click();
-                console.log('Simulated main image click');
+               
             }
         };
     </script>
@@ -187,40 +184,36 @@
     <!-- Simple fallback script -->
     <script>
         window.addEventListener('load', function() {
-            console.log('📱 Tour Details Page Fully Loaded');
+            
             
             // Wait a bit for all scripts to initialize
             setTimeout(() => {
-                console.log('🔍 Checking initialization status...');
+                
                 
                 // Check if manager was created
                 if (window.TourDetailsManager) {
-                    console.log('✅ TourDetailsManager class loaded');
+                    
                 }
                 
                 // Check if image handler instance exists
                 const managerInstance = window._tourManagerInstance;
                 if (managerInstance && managerInstance.imageHandler) {
-                    console.log('✅ ImageHandler instance found via manager:', managerInstance.imageHandler);
+                    
                     
                     // Test if images are loaded
                     if (managerInstance.imageHandler.images && managerInstance.imageHandler.images.length > 0) {
-                        console.log(`📸 ${managerInstance.imageHandler.images.length} images loaded`);
                         
-                        // Manual test of click handlers
-                        console.log('🖱️ Manual click test:');
-                        console.log('- Click side images to switch with main image');
-                        console.log('- Click main image or "View All" to open gallery');
-                        console.log('- Click gallery navigation buttons to browse');
+                        
+                    
                     }
                 } else {
-                    console.warn('⚠️ ImageHandler not accessible via manager');
+                    
                     
                     // Try direct access
                     if (window.imageHandler) {
-                        console.log('✅ Found window.imageHandler directly');
+                        
                     } else if (window._imageHandlerInstance) {
-                        console.log('✅ Found window._imageHandlerInstance');
+                       
                     }
                 }
                 
@@ -237,7 +230,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             if (!window.location.pathname.includes('tour-details.html')) return;
             
-            console.log('🔧 Applying backup fix for tour-details navigation...');
+           
             
             // Fix links after a delay (in case nav loads later)
             setTimeout(function() {
@@ -259,7 +252,7 @@
                     }
                 });
                 
-                console.log(`✅ Fixed ${navLinks.length} navigation links`);
+               
             }, 1000);
         });
     </script>

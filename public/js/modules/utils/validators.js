@@ -1,5 +1,5 @@
 // js/modules/utils/validators.js
-console.log('=== VALIDATORS UTILITY LOADED ===');
+
 
 const Validators = {
     /**
@@ -45,4 +45,3 @@ const Validators = {
 
 // Make available globally
 window.Validators = Validators;
-console.log('✅ Validators utility ready');

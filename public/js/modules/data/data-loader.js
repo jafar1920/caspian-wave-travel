@@ -1,5 +1,5 @@
 // js/modules/data/data-loader.js
-console.log('=== DATA LOADER MODULE LOADED ===');
+
 
 const DataLoader = {
     /**
@@ -9,7 +9,7 @@ const DataLoader = {
      * @returns {Promise<Array>} Array of tours
      */
     async loadTours(limit = 0, sortBy = 'createdAt') {
-        console.log('🔄 Loading tours from Firebase...');
+       
         
         if (!window.DomHelpers || !window.DomHelpers.isFirebaseAvailable('getAllTours')) {
             throw new Error('Firebase service not available');
@@ -34,7 +34,7 @@ const DataLoader = {
             // Apply limit if specified
             const finalTours = limit > 0 ? sortedTours.slice(0, limit) : sortedTours;
             
-            console.log(`✅ Loaded ${finalTours.length} tours`);
+            
             return finalTours;
             
         } catch (error) {
@@ -50,7 +50,7 @@ const DataLoader = {
      * @returns {Promise<Array>} Array of packages
      */
     async loadPackages(limit = 0, sortBy = 'createdAt') {
-        console.log('🔄 Loading packages from Firebase...');
+       
         
         if (!window.DomHelpers || !window.DomHelpers.isFirebaseAvailable('getAllPackages')) {
             throw new Error('Firebase service not available');
@@ -75,7 +75,7 @@ const DataLoader = {
             // Apply limit if specified
             const finalPackages = limit > 0 ? sortedPackages.slice(0, limit) : sortedPackages;
             
-            console.log(`✅ Loaded ${finalPackages.length} packages`);
+           
             return finalPackages;
             
         } catch (error) {
@@ -154,4 +154,3 @@ const DataLoader = {
 
 // Make available globally
 window.DataLoader = DataLoader;
-console.log('✅ Data Loader ready');

@@ -1,4 +1,4 @@
-console.log('=== IMAGE DOM MANAGER LOADED ===');
+
 
 class ImageDOM {
     static setMainImage(imageUrl) {
@@ -6,19 +6,19 @@ class ImageDOM {
         if (mainImage && imageUrl) {
             mainImage.src = imageUrl;
             mainImage.style.cursor = 'pointer';
-            console.log('✅ Main image source set');
+            
         }
     }
 
     static setSideImages(images) {
-        console.log('🔧 Setting up side images...');
+        
         
         // Side Image 1
         const sideImage1 = document.getElementById('side-image-1');
         if (sideImage1 && images[1]) {
             sideImage1.src = images[1];
             sideImage1.style.cursor = 'pointer';
-            console.log('✅ Side image 1 source set');
+            
         }
         
         // Side Image 2
@@ -26,7 +26,7 @@ class ImageDOM {
         if (sideImage2 && images[2]) {
             sideImage2.src = images[2];
             sideImage2.style.cursor = 'pointer';
-            console.log('✅ Side image 2 source set');
+            
         }
     }
 
@@ -55,13 +55,13 @@ class ImageDOM {
             tempSrc = mainImage.src;
             mainImage.src = sideImage1.src;
             sideImage1.src = tempSrc;
-            console.log('✅ Switched with side image 1');
+            
         } else if (index === 2 && sideImage2.src) {
             // Swap main image with side image 2
             tempSrc = mainImage.src;
             mainImage.src = sideImage2.src;
             sideImage2.src = tempSrc;
-            console.log('✅ Switched with side image 2');
+            
         } else {
             console.error('❌ Cannot switch images');
         }
@@ -84,4 +84,3 @@ class ImageDOM {
 
 // Export globally
 window.ImageDOM = ImageDOM;
-console.log('✅ ImageDOM manager loaded');

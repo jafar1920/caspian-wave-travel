@@ -1,9 +1,9 @@
 // js/tour-details/itinerary-handler.js
-console.log('=== ITINERARY HANDLER MODULE LOADED ===');
+
 
 class ItineraryHandler {
     constructor() {
-        console.log('ItineraryHandler initialized');
+       
     }
 
     renderItinerary(itinerary) {

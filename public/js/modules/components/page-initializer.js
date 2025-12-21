@@ -1,4 +1,4 @@
-console.log('=== PAGE INITIALIZER LOADED ===');
+
 
 class PageInitializer {
     static async initializePage(loader) {
@@ -12,13 +12,13 @@ class PageInitializer {
     }
 
     static async initializeTourDetailsPage(loader) {
-        console.log('Loading tour details page components');
+       
         await loader.loadComponents(['nav', 'footer']);
         PageInitializer.initializeTourDetails();
     }
 
     static async initializeMainPage(loader) {
-        console.log('Loading main page components');
+       
         const components = [
             'nav', 'header', 'services', 'packages', 
             'carousel', 'about', 'contact', 'footer'

@@ -1,5 +1,5 @@
 // js/modules/components/packages-loader.js
-console.log('=== PACKAGES LOADER COMPONENT LOADED ===');
+
 
 const PackagesLoader = {
     /**
@@ -9,7 +9,7 @@ const PackagesLoader = {
      * @returns {Promise<boolean>} Success status
      */
     async load(containerId, options = {}) {
-        console.log(`🎯 Loading packages into #${containerId}`);
+       
         
         const container = document.getElementById(containerId);
         if (!container) {
@@ -35,7 +35,7 @@ const PackagesLoader = {
             
             // Render packages
             this.renderPackages(container, packages);
-            console.log(`✅ Rendered ${packages.length} packages in #${containerId}`);
+           
             return true;
             
         } catch (error) {
@@ -121,4 +121,3 @@ const PackagesLoader = {
 
 // Make available globally
 window.PackagesLoader = PackagesLoader;
-console.log('✅ Packages Loader ready');

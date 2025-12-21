@@ -1,5 +1,5 @@
 // js/pages/tour-details.js
-console.log('=== TOUR DETAILS PAGE ENTRY POINT ===');
+
 
 // Global gallery functions
 window.openGallery = function() {
@@ -30,7 +30,7 @@ window.nextImage = function() {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, initializing tour loading...');
+  
     
     if (typeof TourDetailsManager !== 'undefined') {
         const tourManager = new TourDetailsManager();

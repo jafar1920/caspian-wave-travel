@@ -1,12 +1,10 @@
-console.log('=== IMAGE GALLERY MANAGER LOADED ===');
+
 
 class ImageGallery {
     static keydownHandler = null;
     
     static open(imageHandler, startIndex = 0) {
-        console.log('🚪 OPENING GALLERY...');
-        console.log('   Start index:', startIndex);
-        console.log('   Total images:', imageHandler.totalImages);
+       
         
         if (imageHandler.totalImages === 0) {
             console.error('❌ No images to show in gallery!');
@@ -20,19 +18,19 @@ class ImageGallery {
         if (galleryModal) {
             galleryModal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
-            console.log('✅ Gallery modal displayed');
+            
             
             this.setupGallery(imageHandler);
             this.showCurrent(imageHandler);
             
-            console.log('✅ Gallery opened successfully');
+            
         } else {
             console.error('❌ Gallery modal not found!');
         }
     }
 
     static setupGallery(imageHandler) {
-        console.log('🔧 Setting up gallery...');
+        
         
         this.setupGalleryButtons(imageHandler);
         this.loadThumbnails(imageHandler);
@@ -43,7 +41,7 @@ class ImageGallery {
     }
 
     static setupGalleryButtons(imageHandler) {
-        console.log('🔧 Setting up gallery buttons...');
+        
         
         const setupButton = (selector, callback, label) => {
             const btn = document.querySelector(selector);
@@ -59,11 +57,11 @@ class ImageGallery {
             freshBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log(`🖱️ ${label} button clicked`);
+                
                 callback.call(imageHandler);
             });
             
-            console.log(`✅ ${label} button setup`);
+            
         };
         
         setupButton('.lightbox-nav.prev', imageHandler.prevImage, 'Prev');
@@ -73,13 +71,13 @@ class ImageGallery {
     }
 
     static close() {
-        console.log('🚪 CLOSING GALLERY...');
+        
         
         const galleryModal = document.getElementById('gallery-modal');
         if (galleryModal) {
             galleryModal.style.display = 'none';
             document.body.style.overflow = 'auto';
-            console.log('✅ Gallery closed');
+            
         }
         
         if (window.ImageKeyboard) {
@@ -94,7 +92,7 @@ class ImageGallery {
     }
 
     static next(imageHandler) {
-        console.log('⏭️ NEXT IMAGE called');
+        
         
         if (imageHandler.totalImages <= 1) return;
         
@@ -103,7 +101,7 @@ class ImageGallery {
     }
 
     static prev(imageHandler) {
-        console.log('⏮️ PREV IMAGE called');
+        
         
         if (imageHandler.totalImages <= 1) return;
         
@@ -112,7 +110,7 @@ class ImageGallery {
     }
 
     static showCurrent(imageHandler) {
-        console.log('🖼️ SHOWING CURRENT IMAGE', imageHandler.currentImageIndex);
+        
         
         if (imageHandler.currentImageIndex >= 0 && imageHandler.currentImageIndex < imageHandler.totalImages) {
             const imageUrl = imageHandler.images[imageHandler.currentImageIndex];
@@ -128,7 +126,7 @@ class ImageGallery {
     }
 
     static loadThumbnails(imageHandler) {
-        console.log('🖼️ LOADING THUMBNAILS...');
+        
         const container = document.getElementById('gallery-thumbnails');
         
         if (!container) {
@@ -151,13 +149,13 @@ class ImageGallery {
             container.appendChild(thumb);
             
             thumb.addEventListener('click', () => {
-                console.log('🖼️ Thumbnail clicked:', index);
+                
                 imageHandler.currentImageIndex = index;
                 this.showCurrent(imageHandler);
             });
         });
         
-        console.log(`✅ Created ${imageHandler.images.length} thumbnails`);
+        
     }
 
     static updateCounters(imageHandler) {
@@ -180,7 +178,7 @@ class ImageGallery {
     }
 
     static toggleZoom(imageHandler) {
-        console.log('🔍 TOGGLE ZOOM');
+        
         const lightboxImage = document.getElementById('lightbox-image');
         if (lightboxImage) {
             imageHandler.isZoomed = !imageHandler.isZoomed;
@@ -191,4 +189,3 @@ class ImageGallery {
 
 // Export globally
 window.ImageGallery = ImageGallery;
-console.log('✅ ImageGallery manager loaded');

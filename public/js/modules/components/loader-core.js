@@ -1,12 +1,12 @@
-console.log('=== COMPONENT LOADER CORE LOADED ===');
+
 
 class ComponentLoader {
     constructor() {
-        console.log('ComponentLoader initialized');
+       
         this.components = {};
         this.currentPage = this.getCurrentPage();
         this.componentCache = new Map();
-        console.log('Detected page:', this.currentPage);
+       
         this.showLoader();
     }
 
@@ -33,7 +33,7 @@ class ComponentLoader {
 
     async loadComponent(componentName) {
         if (this.componentCache.has(componentName)) {
-            console.log(`Loading ${componentName} from cache`);
+           
             const cachedHtml = this.componentCache.get(componentName);
             this.insertComponent(componentName, cachedHtml);
             return true;

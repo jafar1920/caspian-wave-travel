@@ -1,8 +1,8 @@
-console.log('=== NAVBAR MANAGER LOADED ===');
+
 
 class NavbarManager {
     static initialize() {
-        console.log('Initializing navbar...');
+       
         
         let attempts = 0;
         const maxAttempts = 5;
@@ -26,7 +26,7 @@ class NavbarManager {
             
             NavbarManager.createMobileMenu(navContainer, navLinks, socialIcons);
             NavbarManager.setupEventListeners(hamburger, navLinks, socialIcons);
-            console.log('Navbar initialization complete!');
+           
         };
         
         setTimeout(tryInitialize, 100);

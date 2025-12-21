@@ -1,14 +1,14 @@
-console.log('=== IMAGE EVENTS MANAGER LOADED ===');
+
 
 class ImageEvents {
     static setupAllClickHandlers(imageHandler) {
-        console.log('🔗 Setting up all click handlers...');
+      
         
         this.setupMainImageClick(imageHandler);
         this.setupSideImageClicks(imageHandler);
         this.setupViewAllButton(imageHandler);
         
-        console.log('✅ All click handlers setup complete');
+        
     }
 
     static setupMainImageClick(imageHandler) {
@@ -21,10 +21,10 @@ class ImageEvents {
             freshMainImg.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('🖱️ Main image clicked');
+               
                 imageHandler.openGallery(0);
             });
-            console.log('✅ Main image click handler added');
+            
         }
     }
 
@@ -53,7 +53,7 @@ class ImageEvents {
         freshContainer.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            console.log(`🖱️ Side image ${index} container clicked`);
+            
             imageHandler.switchMainImage(index);
         });
         
@@ -65,7 +65,7 @@ class ImageEvents {
             img.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log(`🖱️ Side image ${index} clicked`);
+                
                 imageHandler.switchMainImage(index);
             });
         }
@@ -75,16 +75,16 @@ class ImageEvents {
             overlay.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log(`🖱️ Side image ${index} OVERLAY clicked`);
+                
                 imageHandler.switchMainImage(index);
             });
         }
         
-        console.log(`✅ Side image ${index} handlers added`);
+       
     }
 
     static setupViewAllButton(imageHandler) {
-        console.log('🔧 Setting up View All button...');
+        
         
         const viewAllButton = document.getElementById('view-all-button');
         if (viewAllButton) {
@@ -95,12 +95,12 @@ class ImageEvents {
             freshButton.style.cursor = 'pointer';
             
             freshButton.addEventListener('click', (e) => {
-                console.log('🎯 View All clicked');
+               
                 e.preventDefault();
                 e.stopPropagation();
                 
                 if (imageHandler.totalImages > 0) {
-                    console.log('   Opening gallery...');
+                    
                     imageHandler.openGallery(0);
                 } else {
                     console.error('❌ No images to show!');
@@ -116,15 +116,14 @@ class ImageEvents {
             imageCountElement.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('📝 Image count text clicked');
+               
                 imageHandler.openGallery(0);
             });
         }
         
-        console.log('✅ View All button setup complete');
+       
     }
 }
 
 // Export globally
 window.ImageEvents = ImageEvents;
-console.log('✅ ImageEvents manager loaded');

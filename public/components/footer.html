@@ -53,14 +53,14 @@
 <script>
 // Improved Footer Initialization with proper waiting
 (function() {
-    console.log('🎯 FOOTER COMPONENT INITIALIZED');
+   
     
     let retryCount = 0;
     const MAX_RETRIES = 10; // Increased retries
     const RETRY_DELAY = 500; // 500ms between retries
     
     function tryLoadFooter() {
-        console.log(`🔄 Footer loading attempt ${retryCount + 1}/${MAX_RETRIES}`);
+        
         
         // Check if ALL required components are available
         if (!window.DataLoader || 
@@ -69,12 +69,7 @@
             !window.FooterLoader || 
             !window.FooterLoader.load) {
             
-            console.log('⏳ Waiting for dependencies...', {
-                DataLoader: !!window.DataLoader,
-                DataLoaderMethods: window.DataLoader ? 
-                    {loadTours: !!window.DataLoader.loadTours, loadPackages: !!window.DataLoader.loadPackages} : 'none',
-                FooterLoader: !!window.FooterLoader
-            });
+           
             
             if (retryCount < MAX_RETRIES) {
                 retryCount++;
@@ -89,7 +84,7 @@
         }
         
         // Everything is ready, load footer content
-        console.log('✅ All dependencies ready, loading footer...');
+        
         window.FooterLoader.load().catch(error => {
             console.error('❌ FooterLoader failed:', error);
             showLoadingMessage();

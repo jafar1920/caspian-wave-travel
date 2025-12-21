@@ -1,5 +1,5 @@
 // js/core/firebase/service.js
-console.log('=== FIREBASE SERVICE MODULE LOADED ===');
+
 
 import { firebaseConfig, COLLECTIONS } from './config.js';
 
@@ -33,7 +33,7 @@ class FirebaseTourService {
             this.db = firebase.firestore();
             this.initialized = true;
             
-            console.log('✅ Firebase service initialized');
+            
             return true;
             
         } catch (error) {
@@ -45,7 +45,7 @@ class FirebaseTourService {
     async getTour(tourId) {
         // Try cache first
         if (this.cache[tourId]) {
-            console.log(`📦 Using cache: ${tourId}`);
+            
             return this.cache[tourId];
         }
         
@@ -59,7 +59,7 @@ class FirebaseTourService {
         
         try {
             // Get from Firebase
-            console.log(`🌐 Fetching from Firebase: ${tourId}`);
+            
             const doc = await this.db.collection(COLLECTIONS.TOURS).doc(tourId).get();
             
             if (doc.exists) {
@@ -68,7 +68,7 @@ class FirebaseTourService {
                 // Cache it
                 this.cache[tourId] = tourData;
                 
-                console.log(`✅ Loaded from Firebase: ${tourId}`);
+                
                 return tourData;
             } else {
                 console.warn(`⚠️ Tour not found in Firebase: ${tourId}`);
@@ -84,7 +84,7 @@ class FirebaseTourService {
     
 // In firebase-service.js, update the fallback method:
 fallbackToStatic(tourId) {
-    console.log(`🔄 Falling back to static data: ${tourId}`);
+    
     
     // First check if we have a local reference
     if (typeof tourData !== 'undefined' && tourData[tourId]) {

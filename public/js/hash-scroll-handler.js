@@ -1,26 +1,26 @@
 // js/hash-scroll-handler.js
-console.log('🔗 Hash Scroll Handler loaded');
+
 
 function handleHashNavigation() {
-    console.log('🔗 Handling hash navigation...');
+   
     
     // Check if URL has a hash (#something)
     if (window.location.hash) {
         const hash = window.location.hash.substring(1);
-        console.log('Found hash in URL:', hash);
+      
         
         // Function to scroll to element
         function scrollToElement() {
             const targetElement = document.getElementById(hash);
             
             if (targetElement) {
-                console.log(`Scrolling to: #${hash}`);
+                
                 window.scrollTo({
                     top: targetElement.offsetTop - 80,
                     behavior: 'smooth'
                 });
             } else if (hash === 'home') {
-                console.log('Scrolling to home (top)');
+                
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'

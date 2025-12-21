@@ -1,31 +1,27 @@
 // js/modules/tours/manager.js
-console.log('=== TOUR MANAGER MODULE LOADED ===');
+
 
 class TourDetailsManager {
     constructor() {
-        console.log('TourDetailsManager initialized');
+        
         
         // Create instances
         this.imageHandler = window.ImageHandler ? new window.ImageHandler() : null;
         this.itineraryHandler = window.ItineraryHandler ? new window.ItineraryHandler() : null;
         this.tourRenderer = window.TourRenderer ? new window.TourRenderer() : null;
         
-        console.log('Handlers created:', {
-            imageHandler: !!this.imageHandler,
-            itineraryHandler: !!this.itineraryHandler,
-            tourRenderer: !!this.tourRenderer
-        });
+       
     }
 
     getTourIdFromURL() {
         const urlParams = new URLSearchParams(window.location.search);
         const tourId = urlParams.get('tour');
-        console.log('URL Tour ID:', tourId);
+        
         return tourId;
     }
 
     loadTourDetails() {
-        console.log('Loading tour details...');
+        
         const tourId = this.getTourIdFromURL();
         
         if (!tourId) {
@@ -35,14 +31,14 @@ class TourDetailsManager {
 
         // Try Firebase first
         if (window.FirebaseTourService) {
-            console.log('Trying Firebase...');
+           
             window.FirebaseTourService.getTour(tourId)
                 .then(tour => {
                     if (tour) {
-                        console.log('✅ Loaded from Firebase:', tour.title);
+                        
                         this.renderTourDetails(tour);
                     } else {
-                        console.log('🔄 Falling back to static data');
+                        
                         this.loadFromStaticData(tourId);
                     }
                 })
@@ -51,13 +47,13 @@ class TourDetailsManager {
                     this.loadFromStaticData(tourId);
                 });
         } else {
-            console.log('Firebase not available, using static data');
+            
             this.loadFromStaticData(tourId);
         }
     }
 
     loadFromStaticData(tourId) {
-        console.log('Loading from static data:', tourId);
+        
         
         if (!window.tourData || !window.tourData[tourId]) {
             console.error('Tour not found in static data:', tourId);
@@ -66,7 +62,7 @@ class TourDetailsManager {
         }
         
         const tour = window.tourData[tourId];
-        console.log('✅ Loaded from static:', tour.title);
+        
         this.renderTourDetails(tour);
     }
 
@@ -83,7 +79,7 @@ class TourDetailsManager {
     }
 
     renderTourDetails(tour) {
-        console.log('Rendering tour:', tour.title);
+       
         
         // Update page title
         if (this.tourRenderer) {
@@ -132,7 +128,7 @@ class TourDetailsManager {
             }
         }
         
-        console.log('Tour content rendered successfully');
+        
     }
 }
 

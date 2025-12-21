@@ -2,7 +2,7 @@
 let carouselInterval;
 
 function initializeCarousel() {
-    console.log('Initializing carousel...');
+    
     
     const track = document.querySelector('.carousel-track');
     const slides = document.querySelectorAll('.carousel-slide');
@@ -11,7 +11,7 @@ function initializeCarousel() {
     const nextBtn = document.querySelector('.next-btn');
     
     if (!track || slides.length === 0) {
-        console.log('Carousel elements not found, skipping initialization');
+       
         return;
     }
     
@@ -98,7 +98,7 @@ function initializeCarousel() {
     // Start auto-play
     startAutoPlay();
     
-    console.log('Carousel initialized successfully');
+   
 }
 
 // Header loading function
@@ -107,7 +107,7 @@ function enhanceHeaderLoading() {
     const headerImageUrl = 'https://firebasestorage.googleapis.com/v0/b/caspianwavetravel-b9aa4.firebasestorage.app/o/center.jpg?alt=media&token=a7e54401-d351-4b6c-8178-02cf88ecc34e';
     
     if (!header) {
-        console.log('Header not found for image loading');
+       
         return;
     }
     
@@ -120,7 +120,7 @@ function enhanceHeaderLoading() {
     };
     
     img.onerror = function() {
-        console.log('Header image failed to load, using gradient background');
+        
     };
     
     img.src = headerImageUrl;

@@ -1,14 +1,14 @@
-console.log('=== NAVIGATION FIXER LOADED ===');
+
 
 class NavigationFixer {
     static fixTourDetailsNavigation() {
-        console.log('Checking navigation fixes...');
+        
         
         if (!window.location.pathname.includes('tour-details.html')) {
             return;
         }
         
-        console.log('On tour-details page, fixing navigation links...');
+       
         
         let attempts = 0;
         const maxAttempts = 5;
@@ -32,7 +32,7 @@ class NavigationFixer {
             }
             
             if (fixedCount > 0) {
-                console.log(`Fixed ${fixedCount} navigation links`);
+               
             } else if (attempts < maxAttempts) {
                 setTimeout(tryFixLinks, 300);
             }

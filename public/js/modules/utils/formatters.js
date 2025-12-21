@@ -1,5 +1,5 @@
 // js/modules/utils/formatters.js
-console.log('=== FORMATTERS UTILITY LOADED ===');
+
 
 const Formatters = {
     /**
@@ -74,4 +74,3 @@ const Formatters = {
 
 // Make available globally
 window.Formatters = Formatters;
-console.log('✅ Formatters utility ready');

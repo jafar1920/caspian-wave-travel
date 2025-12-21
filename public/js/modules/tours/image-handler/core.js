@@ -1,32 +1,32 @@
-console.log('=== IMAGE HANDLER CORE LOADED ===');
+
 
 // Check if already loaded
 if (window._imageHandlerLoaded) {
-    console.log('⚠️ ImageHandler already loaded, skipping');
+   
     throw new Error('ImageHandler already loaded - check script loading');
 }
 window._imageHandlerLoaded = true;
 
 class ImageHandler {
     constructor() {
-        console.log('✅ ImageHandler constructor called');
+        
         
         this.currentImageIndex = 0;
         this.totalImages = 0;
         this.images = [];
         this.isZoomed = false;
         
-        console.log('✅ ImageHandler instance created');
+       
     }
 
     // Initialize with tour data
     init(tour) {
-        console.log('🔄 ImageHandler init with tour:', tour?.title);
+        
         
         if (tour && tour.images) {
             this.images = tour.images;
             this.totalImages = tour.images.length;
-            console.log(`📸 Loaded ${this.totalImages} images`);
+           
             
             this.renderGallery(tour.images);
         } else {
@@ -35,7 +35,7 @@ class ImageHandler {
     }
 
     renderGallery(images) {
-        console.log('🎨 renderGallery called with', images.length, 'images');
+       
         
         this.images = images;
         this.totalImages = images.length;
@@ -57,7 +57,7 @@ class ImageHandler {
 
     // Switch images between main and side
     switchMainImage(index) {
-        console.log('🔄 Switching main image with index:', index);
+       
         
         if (window.ImageDOM) {
             window.ImageDOM.switchImages(index);
@@ -104,4 +104,3 @@ class ImageHandler {
 
 // Export globally
 window.ImageHandler = ImageHandler;
-console.log('✅ ImageHandler core class loaded');

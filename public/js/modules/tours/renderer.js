@@ -1,9 +1,9 @@
 // js/modules/tours/renderer.js
-console.log('=== TOUR RENDERER MODULE LOADED ===');
+
 
 class TourRenderer {
     constructor() {
-        console.log('TourRenderer initialized');
+        
     }
 
     renderTourContent(tour) {

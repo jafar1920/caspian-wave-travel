@@ -1,5 +1,5 @@
 // js/modules/utils/dom-helpers.js
-console.log('=== DOM HELPERS UTILITY LOADED ===');
+
 
 const DomHelpers = {
     /**
@@ -128,4 +128,3 @@ const DomHelpers = {
 
 // Make available globally
 window.DomHelpers = DomHelpers;
-console.log('✅ DOM Helpers utility ready');

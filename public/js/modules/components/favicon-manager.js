@@ -8,7 +8,7 @@ class FaviconManager {
     // Initialize the favicon (call this once)
     initialize() {
         if (this.initialized) {
-            console.warn('⚠️ FaviconManager already initialized');
+            
             return;
         }
         
@@ -16,8 +16,7 @@ class FaviconManager {
         this.createFaviconLinks();
         this.initialized = true;
         
-        console.log('✅ FaviconManager: Created 4 favicon links');
-        console.log('🔗 URL:', this.faviconUrl);
+      
     }
     
     // Remove any existing favicon links
@@ -29,7 +28,7 @@ class FaviconManager {
         `);
         
         if (existingLinks.length > 0) {
-            console.log(`🗑️ Removing ${existingLinks.length} existing favicon link(s)`);
+           
             existingLinks.forEach(link => link.remove());
         }
     }

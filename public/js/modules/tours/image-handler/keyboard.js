@@ -1,10 +1,10 @@
-console.log('=== IMAGE KEYBOARD MANAGER LOADED ===');
+
 
 class ImageKeyboard {
     static keydownHandler = null;
 
     static addListeners(imageHandler) {
-        console.log('⌨️ Adding keyboard listeners');
+        
         
         this.keydownHandler = (e) => {
             switch(e.key) {
@@ -38,4 +38,3 @@ class ImageKeyboard {
 
 // Export globally
 window.ImageKeyboard = ImageKeyboard;
-console.log('✅ ImageKeyboard manager loaded');
